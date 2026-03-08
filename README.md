@@ -48,6 +48,44 @@ A **multi-commodity market simulation environment** purpose-built for training L
                             [Wealth Tracking]      [Event Generator]
 ```
 
+## Deployment to HuggingFace Spaces
+
+Space: https://huggingface.co/spaces/kenmandal/market-forge-env
+
+### Step 1 — Authenticate
+Only needed once (or when the token expires). Token name: `openenv-token`.
+```bash
+huggingface-cli login
+# Paste your write-access token from: https://huggingface.co/settings/tokens
+```
+
+### Step 2 — Deploy
+Run from inside the `market-forge-openenv/` directory:
+```python
+from huggingface_hub import HfApi
+
+api = HfApi()
+
+api.upload_folder(
+    folder_path=".",
+    repo_id="kenmandal/market-forge-env",
+    repo_type="space",
+    ignore_patterns=[
+        "__pycache__", "*.pyc", "*.pptx", "*.docx", "*.zip",
+        "tests/", "training_results.png", "deploy_to_hf.sh",
+        "*_1.py", "~$*",
+    ],
+    commit_message="Deploy Multi-Agent MarketForge",
+)
+```
+
+Files deployed: `README.md`, `Dockerfile`, `requirements.txt`, `app_visual.py`,
+`client.py`, `models.py`, `rewards.py`, `__init__.py`, `server/__init__.py`,
+`server/app.py`, `server/market_environment.py`, `train_market_forge.py`,
+`train_market_forge_notebook.py`
+
+---
+
 ## Quick Start
 
 ### Connect to the Environment

@@ -1,0 +1,133 @@
+# =============================================================================
+# MarketForge - Northflank Training Dockerfile
+# =============================================================================
+# Base image required by Northflank OpenEnv Hackathon:
+#   pytorch/pytorch:2.8.0-cuda12.6-cudnn9-runtime (Ubuntu 22.04.5)
+#
+# Hardware available on your node:
+#   128 vCPU | 2 TB RAM | 1x NVIDIA H100 (80 GB HBM3)
+#
+# Usage (Northflank CI/CD Python application → Deploy from GitHub):
+#   1. Point Northflank service to: kaniska/MarketForge (branch: main)
+#   2. Set Dockerfile path: Dockerfile.northflank
+#   3. Set port: 8888 (JupyterLab) and/or 8000 (FastAPI env server)
+#   4. Add a persistent volume mounted at: /workspace/checkpoints
+# =============================================================================
+
+FROM pytorch/pytorch:2.8.0-cuda12.6-cudnn9-runtime
+
+# ── System packages ───────────────────────────────────────────────────────────
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        git \
+        curl \
+        wget \
+        vim \
+        htop \
+        openssh-server \
+        build-essential \
+        libssl-dev \
+        libffi-dev \
+        python3-dev \
+        ninja-build \
+        libaio-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# ── SSH server (Northflank SSH access) ───────────────────────────────────────
+RUN mkdir -p /run/sshd && \
+    echo "PermitRootLogin yes"       >> /etc/ssh/sshd_config && \
+    echo "PasswordAuthentication no" >> /etc/ssh/sshd_config && \
+    echo "PubkeyAuthentication yes"  >> /etc/ssh/sshd_config
+
+EXPOSE 22
+
+# ── Python training dependencies ──────────────────────────────────────────────
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
+
+RUN pip install --no-cache-dir \
+    # ── GRPO training stack ─────────────────────────
+    "trl[vllm]>=0.15.0" \
+    "transformers>=4.47.0" \
+    "accelerate>=0.26.0" \
+    "peft>=0.10.0" \
+    "datasets>=2.14.0" \
+    "evaluate>=0.4.0" \
+    # ── vLLM (H100 inference acceleration) ──────────
+    "vllm>=0.6.0" \
+    # ── OpenEnv environment ──────────────────────────
+    "openenv-core[core]>=0.2.1" \
+    # ── MarketForge server ───────────────────────────
+    "fastapi>=0.100.0" \
+    "uvicorn[standard]>=0.20.0" \
+    # ── HuggingFace Hub (model push) ─────────────────
+    "huggingface_hub>=0.20.0" \
+    # ── Monitoring & viz ─────────────────────────────
+    "wandb>=0.18.0" \
+    "tensorboard>=2.15.0" \
+    "matplotlib>=3.7.0" \
+    "numpy>=1.24.0" \
+    # ── JupyterLab (optional interactive shell) ───────
+    "jupyterlab>=4.0.0" \
+    "ipywidgets>=8.0.0" \
+    # ── Northflank CLI (file upload/download) ─────────
+    # Install via npm — see CMD section
+    "requests>=2.28.0"
+
+# ── Install Northflank CLI ────────────────────────────────────────────────────
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs && \
+    npm install -g @northflank/cli && \
+    rm -rf /var/lib/apt/lists/*
+
+# ── Working directory & source code ──────────────────────────────────────────
+WORKDIR /workspace
+
+COPY . /workspace/market-forge-openenv/
+
+# ── Persistent storage mount point (configure in Northflank UI) ──────────────
+# Northflank → Service → Storage → Add volume → Mount path: /workspace/checkpoints
+RUN mkdir -p /workspace/checkpoints /workspace/logs
+
+# ── Environment variables ─────────────────────────────────────────────────────
+ENV PYTHONPATH=/workspace/market-forge-openenv
+ENV HF_HOME=/workspace/.cache/huggingface
+ENV TRANSFORMERS_CACHE=/workspace/.cache/huggingface/transformers
+ENV VLLM_WORKER_MULTIPROC_METHOD=spawn
+# Set your HF token as a Northflank Secret, not here:
+# ENV HUGGING_FACE_HUB_TOKEN=<set via Northflank Secrets UI>
+
+# ── Expose ports ──────────────────────────────────────────────────────────────
+# Port 8000 : FastAPI environment server (OpenEnv API)
+# Port 8888 : JupyterLab (interactive training)
+EXPOSE 8000 8888
+
+# ── Default command: keep container alive + start JupyterLab ─────────────────
+# To start training instead, override CMD in Northflank → Service → CMD Override:
+#   /bin/bash -c "cd /workspace/market-forge-openenv && python train_market_forge.py"
+CMD ["/bin/bash", "-c", "\
+    echo 'Starting MarketForge services...' && \
+    # Start FastAPI env server in background \
+    cd /workspace/market-forge-openenv && \
+    uvicorn server.app:app --host 0.0.0.0 --port 8000 & \
+    # Start JupyterLab (access via Northflank port forwarding) \
+    jupyter lab \
+        --ip=0.0.0.0 \
+        --port=8888 \
+        --no-browser \
+        --allow-root \
+        --NotebookApp.token='' \
+        --NotebookApp.password='' \
+        --notebook-dir=/workspace \
+    "]
+
+# =============================================================================
+# Northflank Service Configuration (set in UI when creating the service)
+# =============================================================================
+# Build source    : GitHub repo kaniska/MarketForge, branch main
+# Dockerfile path : Dockerfile.northflank
+# Compute plan    : H100 GPU (1x), 16+ vCPU, 64+ GB RAM
+# Ephemeral disk  : 30 GB  (under Advanced Resource Options)
+# Persistent vol  : /workspace/checkpoints  (for model checkpoints)
+# Ports exposed   : 8000 (internal), 8888 (internal)
+# Secrets         : HUGGING_FACE_HUB_TOKEN, WANDB_API_KEY
+# CMD override    : set to run training script directly (see above)
+# =============================================================================
