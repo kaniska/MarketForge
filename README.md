@@ -156,6 +156,95 @@ The reward system implements the formal mixed-motive payoff:
 - **Training Improvement (20%)**: GRPO training script with observable reward curves
 - **Reward Pipeline (10%)**: 5-level reward system with theory-of-mind bonuses
 
+## Northflank Deployment
+
+Project: https://app.northflank.com/t/openenv-hack-67/project/hackathon/
+Dockerfile: `Dockerfile.northflank`
+Node: 128 vCPU | 2 TB RAM | 1x NVIDIA H100 (80 GB)
+
+### Northflank Service Configuration
+
+| Setting | Value |
+|---------|-------|
+| Build source | GitHub repo `kaniska/MarketForge`, branch `main` |
+| Dockerfile path | `Dockerfile.northflank` |
+| Compute plan | H100 GPU (1x), 16+ vCPU, 64+ GB RAM |
+| Ephemeral disk | 30 GB (under Advanced Resource Options) |
+| Persistent volume | `/workspace/checkpoints` |
+| Ports | 8000 (FastAPI env server), 8888 (JupyterLab) |
+| Secrets | `HUGGING_FACE_HUB_TOKEN`, `WANDB_API_KEY` |
+
+### Troubleshooting: "This repository is public and does not have Northflank installed"
+
+This error appears when creating a CI/CD service pointing to `kaniska/MarketForge`.
+It means the Northflank GitHub App is not installed on the repo, so auto-builds
+on git push won't trigger. Three ways to resolve it:
+
+#### Fix A — Install the Northflank GitHub App (enables auto-build on push)
+
+1. Go to your team's Git integration page:
+   `https://app.northflank.com/t/openenv-hack-67/integrations/vcs`
+2. Click **Link provider → GitHub → Authorize**
+3. When prompted, select **"Only select repositories"** and choose `kaniska/MarketForge`
+4. Return to Northflank and re-create the service — the warning will be gone
+
+#### Fix B — Create the service anyway and trigger builds manually
+
+1. On the "Create service" screen, **ignore the warning and click Create**
+2. Go to the service → **Builds** tab
+3. Click **"Trigger build"** to start a build manually
+
+Builds work fine — auto-trigger on push is just disabled without the GitHub App.
+This is sufficient for hackathon use.
+
+#### Fix C — Deploy from a pre-built Docker image (no GitHub integration needed)
+
+Build and push the image locally, then point Northflank at the registry:
+
+```bash
+# Build the Northflank-specific image
+cd market-forge-openenv/
+docker build -f Dockerfile.northflank -t kenmandal/market-forge-training:latest .
+
+# Push to Docker Hub
+docker login
+docker push kenmandal/market-forge-training:latest
+```
+
+In Northflank → Create service → **"Deploy a Docker image"** → enter:
+```
+kenmandal/market-forge-training:latest
+```
+
+No GitHub App required.
+
+### Launch Model Training on Northflank
+
+Once the service is running, override the CMD in Northflank UI
+(**Service → Settings → CMD Override**) to start training:
+
+```
+/bin/bash -c "cd /workspace/market-forge-openenv && python train_market_forge.py"
+```
+
+Or connect via JupyterLab (port 8888) and run the training notebook interactively:
+```
+MarketForge_Colab_Training.ipynb
+```
+
+### Monitor Training on Northflank
+
+| What | Where |
+|------|-------|
+| Container logs | Service → **Logs** tab |
+| GPU / CPU metrics | Service → **Metrics** tab |
+| Shell access | Service → **Shell** button (terminal in browser) |
+| SSH access | Follow Northflank SSH guide, then `northflank login` |
+| Checkpoints | Persistent volume at `/workspace/checkpoints` |
+| Model on HF Hub | `https://huggingface.co/kenmandal/market-forge-agent` |
+
+---
+
 ## Built With
 
 - [OpenEnv v0.2.1](https://github.com/meta-pytorch/OpenEnv) - Environment framework

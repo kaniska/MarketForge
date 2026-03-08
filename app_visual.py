@@ -29,6 +29,7 @@ reward_history: List[float] = []
 trade_log: List[str] = []
 coalition_log: List[str] = []
 negotiation_log: List[str] = []
+_state_last_modified: float = time.time()  # only updated on actual state changes
 
 
 # ---------------------------------------------------------------------------
@@ -247,6 +248,7 @@ def run_simulation(num_rounds: int = 30, speed: str = "Normal"):
     """Run a complete market simulation and return visualization data."""
     global sim_history, agent_wealth_history, price_chart_data
     global reward_history, trade_log, coalition_log, negotiation_log
+    global _state_last_modified
 
     sim_history = []
     agent_wealth_history = {aid: [] for aid in AGENT_ROLES}
@@ -323,6 +325,7 @@ def run_simulation(num_rounds: int = 30, speed: str = "Normal"):
             "compound_produced": state.market_metrics.get("compound_goods_produced", 0),
         })
 
+    _state_last_modified = time.time()
     return _format_results(num_rounds, total_rewards)
 
 
@@ -339,13 +342,17 @@ def _format_results(num_rounds, total_rewards):
     strategist = awards["master_strategist"]
 
     # ---- Summary with Awards ----
+    metrics = state.market_metrics
+    coal_count = len(state.coalitions)
     summary_lines = [
         "## Simulation Complete",
         f"**Rounds:** {num_rounds}",
-        f"**Total Trades:** {state.market_metrics.get('total_trades', 0)}",
-        f"**Compound Goods Produced:** {state.market_metrics.get('compound_goods_produced', 0)}",
-        f"**Coalitions Formed:** {state.market_metrics.get('coalitions_formed', 0)}",
-        f"**Deals Negotiated:** {state.market_metrics.get('deals_negotiated', 0)}",
+        f"**Total Trades:** {metrics.get('total_trades', 0)} "
+        f"| **Volume:** ${metrics.get('total_volume', 0):,.1f}",
+        f"**Compound Goods Produced:** {metrics.get('compound_goods_produced', 0)}",
+        f"**Coalitions Formed:** {metrics.get('coalitions_formed', 0)} "
+        f"| **Active:** {coal_count}",
+        f"**Deals Negotiated:** {metrics.get('deals_negotiated', 0)}",
         "",
         "---",
         "",
@@ -356,6 +363,14 @@ def _format_results(num_rounds, total_rewards):
         f"Total Wealth: **${champion['total_wealth']:,.2f}**",
         f"Wealth Growth: +${champion.get('wealth_growth', 0):,.2f}",
         "",
+        f"> **Why {champion['agent_id']} won:** This agent accumulated the highest "
+        f"**total wealth** (cash + inventory market value + compound goods value). "
+        f"Wealth = cash on hand + units in inventory valued at current market prices "
+        f"+ any compound goods at their production value. Growing wealth by "
+        f"**${champion.get('wealth_growth', 0):+,.2f}** means this agent's trading, "
+        f"production, and negotiation strategy outperformed all others in "
+        f"portfolio accumulation.",
+        "",
         "### Award 2: Master Strategist (Skill)",
         f"**Winner: {strategist['agent_id']}**",
         f"Strategic Score: **{strategist['strategic_score']:.4f}**",
@@ -363,10 +378,21 @@ def _format_results(num_rounds, total_rewards):
     bd = strategist.get("breakdown", {})
     if bd:
         summary_lines.extend([
-            f"  - Trade Efficiency: {bd.get('trade_efficiency', 0):.2%}",
-            f"  - Negotiation Mastery: {bd.get('negotiation_mastery', 0):.2%}",
-            f"  - Cooperation Index: {bd.get('cooperation_index', 0):.2%}",
-            f"  - Event Adaptability: {bd.get('event_adaptability', 0):.2%}",
+            f"  - Trade Efficiency: {bd.get('trade_efficiency', 0):.2%} "
+            f"(35% weight — profitable trades / total trades)",
+            f"  - Negotiation Mastery: {bd.get('negotiation_mastery', 0):.2%} "
+            f"(25% weight — successful deals / total deals)",
+            f"  - Cooperation Index: {bd.get('cooperation_index', 0):.2%} "
+            f"(20% weight — compound production + coalition activity)",
+            f"  - Event Adaptability: {bd.get('event_adaptability', 0):.2%} "
+            f"(20% weight — actions responding to market events)",
+            "",
+            f"> **Why {strategist['agent_id']} won:** This agent scored highest on "
+            f"the **strategic skill composite** — a weighted blend of four pillars. "
+            f"Unlike the Wealth award (pure portfolio size), the Strategist award "
+            f"measures *how skillfully* an agent plays: making profitable trades, "
+            f"closing negotiated deals, cooperating in supply chains, and "
+            f"adapting behaviour to market shocks.",
         ])
 
     # ---- Leaderboard Table ----
@@ -514,24 +540,226 @@ def _format_results(num_rounds, total_rewards):
     plt.tight_layout()
 
     # ---- Trade / Negotiation / Coalition Logs ----
-    log_text = "### Recent Trades\n"
-    log_text += "\n".join(trade_log[-20:]) if trade_log else "No trades yet."
-    log_text += "\n\n### Negotiations\n"
-    log_text += "\n".join(negotiation_log[-10:]) if negotiation_log else "No negotiations yet."
-    log_text += "\n\n### Coalitions\n"
-    log_text += "\n".join(coalition_log[-10:]) if coalition_log else "No coalitions formed."
+    log_text = _format_activity_logs()
 
     # ---- Event Timeline ----
-    event_text = "### Market Events Timeline\n"
-    for s in sim_history[-15:]:
-        event_text += f"**Round {s['round']}:** {s['event']}\n"
+    event_text = _format_event_timeline()
 
     return summary, fig, log_text, event_text
 
 
+def _format_activity_logs() -> str:
+    """Format Recent Trades, Negotiations, and Coalitions into structured reports."""
+    sections = []
+
+    # --- Recent Trades ---
+    sections.append("## Recent Trades")
+    if trade_log:
+        sections.append("")
+        sections.append("| Round | Agent | Action | Details | Reward |")
+        sections.append("|:-----:|-------|--------|---------|-------:|")
+        for entry in trade_log[-20:]:
+            # Parse: "R{round}: {agent} {action}s {qty}x {commodity} @ ${price} (reward: {r})"
+            # or:    "R{round}: {agent} produces {compound} (reward: {r})"
+            parts = entry.split(": ", 1)
+            round_str = parts[0] if parts else ""
+            rest = parts[1] if len(parts) > 1 else entry
+            # Extract reward
+            reward_str = ""
+            if "(reward:" in rest:
+                reward_part = rest.split("(reward:")[1].rstrip(")")
+                reward_str = reward_part.strip()
+                rest = rest.split("(reward:")[0].strip()
+            # Extract agent (first word after round)
+            tokens = rest.split(" ", 1)
+            agent = tokens[0] if tokens else ""
+            action_detail = tokens[1] if len(tokens) > 1 else ""
+            # Split action from details
+            if " produces " in action_detail:
+                action = "produces"
+                details = action_detail.replace("produces ", "")
+            elif "buys " in action_detail:
+                action = "buy"
+                details = action_detail.replace("buys ", "")
+            elif "sells " in action_detail:
+                action = "sell"
+                details = action_detail.replace("sells ", "")
+            else:
+                action = action_detail.split(" ")[0] if action_detail else ""
+                details = " ".join(action_detail.split(" ")[1:])
+            sections.append(
+                f"| {round_str} | **{agent}** | `{action}` | {details} | {reward_str} |"
+            )
+    else:
+        sections.append("\n*No trades recorded yet.*")
+
+    # --- Negotiations ---
+    sections.append("")
+    sections.append("---")
+    sections.append("")
+    sections.append("## Negotiations")
+    if negotiation_log:
+        sections.append("")
+        sections.append("| Round | From | To | Message |")
+        sections.append("|:-----:|------|----|---------| ")
+        for entry in negotiation_log[-10:]:
+            # Parse: "R{round}: {agent} -> {target}: "{message}...""
+            parts = entry.split(": ", 1)
+            round_str = parts[0] if parts else ""
+            rest = parts[1] if len(parts) > 1 else entry
+            if " -> " in rest:
+                from_agent, remainder = rest.split(" -> ", 1)
+                if ": " in remainder:
+                    to_agent, message = remainder.split(": ", 1)
+                else:
+                    to_agent = remainder
+                    message = ""
+                message = message.strip().strip('"')
+            else:
+                from_agent = rest.split(" ")[0] if rest else ""
+                to_agent = ""
+                message = rest
+            sections.append(
+                f"| {round_str} | **{from_agent}** | **{to_agent}** | *{message}* |"
+            )
+    else:
+        sections.append("\n*No negotiations recorded yet.*")
+
+    # --- Coalitions ---
+    sections.append("")
+    sections.append("---")
+    sections.append("")
+    sections.append("## Coalitions")
+    if coalition_log:
+        sections.append("")
+        sections.append("| Round | Agent | Proposal |")
+        sections.append("|:-----:|-------|----------|")
+        for entry in coalition_log[-10:]:
+            # Parse: "R{round}: {agent} proposes coalition: {message}"
+            parts = entry.split(": ", 1)
+            round_str = parts[0] if parts else ""
+            rest = parts[1] if len(parts) > 1 else entry
+            if " proposes coalition: " in rest:
+                agent, proposal = rest.split(" proposes coalition: ", 1)
+            else:
+                tokens = rest.split(" ", 1)
+                agent = tokens[0] if tokens else ""
+                proposal = tokens[1] if len(tokens) > 1 else ""
+            sections.append(
+                f"| {round_str} | **{agent}** | {proposal} |"
+            )
+    else:
+        sections.append("\n*No coalitions formed yet.*")
+
+    return "\n".join(sections)
+
+
+def _format_event_timeline() -> str:
+    """Format Market Events Timeline into a structured report."""
+    lines = ["## Market Events Timeline", ""]
+
+    if not sim_history:
+        lines.append("*No events recorded yet.*")
+        return "\n".join(lines)
+
+    lines.append("| Round | Event | Trades | Coalitions | Compounds |")
+    lines.append("|:-----:|-------|-------:|:----------:|:---------:|")
+
+    for s in sim_history[-15:]:
+        event = s["event"]
+        # Highlight disruptive events
+        if any(kw in event.lower() for kw in ["drought", "collapse", "embargo", "restricted"]):
+            event = f"**{event}**"
+        lines.append(
+            f"| {s['round']} | {event} "
+            f"| {s['total_trades']} "
+            f"| {s['coalitions']} "
+            f"| {s['compound_produced']} |"
+        )
+
+    return "\n".join(lines)
+
+
+def _get_active_coalitions() -> list:
+    """Return list of active coalition IDs from the environment."""
+    try:
+        return list(env.state.coalitions.keys())
+    except Exception:
+        return []
+
+
+def _action_effect_explanation(agent_id: str, action_type: str, obs, state) -> str:
+    """Generate a human-readable explanation of what a manual action did."""
+    reward_quality = "positive" if obs.reward > 0 else "negative" if obs.reward < 0 else "neutral"
+    agent_data = state.agents.get(agent_id, {})
+
+    if action_type == "buy":
+        return (
+            f"**Effect:** {agent_id} placed a **buy order** on the market. "
+            f"Cash decreased as inventory grew. Reward was **{reward_quality}** "
+            f"({obs.reward:+.3f}) — a buy is profitable when the price is below "
+            f"market value, allowing the agent to sell later at a higher price."
+        )
+    elif action_type == "sell":
+        return (
+            f"**Effect:** {agent_id} placed a **sell order**, converting inventory "
+            f"into cash. Reward was **{reward_quality}** ({obs.reward:+.3f}) — "
+            f"selling is most effective when prices are above production cost."
+        )
+    elif action_type == "produce":
+        return (
+            f"**Effect:** {agent_id} attempted to **produce a compound good**, "
+            f"consuming raw materials from inventory. Reward was **{reward_quality}** "
+            f"({obs.reward:+.3f}) — production is the cooperation pillar: it requires "
+            f"buying inputs from other agents to craft higher-value goods."
+        )
+    elif action_type == "negotiate":
+        return (
+            f"**Effect:** {agent_id} sent a **negotiation proposal** to the target "
+            f"agent. Reward was **{reward_quality}** ({obs.reward:+.3f}) — "
+            f"negotiation builds reputation and enables bilateral deals outside "
+            f"the open auction."
+        )
+    elif action_type == "propose_coalition":
+        coal_count = len(state.coalitions)
+        return (
+            f"**Effect:** {agent_id} **proposed a new coalition** (alliance). "
+            f"There are now **{coal_count} active coalition(s)**. Reward was "
+            f"**{reward_quality}** ({obs.reward:+.3f}) — coalitions give members "
+            f"synergy bonuses from role diversity and periodic profit sharing."
+        )
+    elif action_type == "join_coalition":
+        return (
+            f"**Effect:** {agent_id} **joined an existing coalition**. Reward was "
+            f"**{reward_quality}** ({obs.reward:+.3f}) — joining gives a synergy "
+            f"bonus that scales with coalition size and member role diversity. "
+            f"A negative reward means the coalition ID was not found."
+        )
+    elif action_type == "leave_coalition":
+        return (
+            f"**Effect:** {agent_id} **left a coalition**. Reward was "
+            f"**{reward_quality}** ({obs.reward:+.3f}) — leaving incurs a small "
+            f"reputation penalty but frees the agent from coalition obligations."
+        )
+    elif action_type == "pass":
+        return (
+            f"**Effect:** {agent_id} **passed** this turn, taking no action. "
+            f"Reward was **{reward_quality}** ({obs.reward:+.3f}) — passing "
+            f"incurs a small penalty to discourage inaction."
+        )
+    else:
+        return (
+            f"**Effect:** Action `{action_type}` executed. "
+            f"Reward: **{obs.reward:+.3f}**."
+        )
+
+
 def step_single_agent(agent_id: str, action_type: str, commodity: str,
-                       price: float, quantity: int, target: str, message: str):
-    """Allow manual agent control."""
+                       price: float, quantity: int, target: str,
+                       message: str, coalition_id: str):
+    """Allow manual agent control and return result + updated leaderboard."""
+    global trade_log, negotiation_log, coalition_log, _state_last_modified
+
     action = MarketAction(
         agent_id=agent_id,
         action_type=action_type,
@@ -540,9 +768,44 @@ def step_single_agent(agent_id: str, action_type: str, commodity: str,
         quantity=int(quantity),
         target_agent=target,
         message=message,
+        coalition_id=coalition_id.strip() if coalition_id else "",
     )
     obs = env.step(action)
-    obs_dict = asdict(obs)
+    _state_last_modified = time.time()
+
+    # Update logs so admin dashboard sees manual entries
+    state = env.state
+    round_num = state.round_number
+    if action_type in ("buy", "sell"):
+        trade_log.append(
+            f"R{round_num}: {agent_id} {action_type}s "
+            f"{int(quantity)}x {commodity} @ ${price:.1f} "
+            f"(reward: {obs.reward:.2f})"
+        )
+    elif action_type == "negotiate":
+        negotiation_log.append(
+            f"R{round_num}: {agent_id} -> {target}: "
+            f'"{message[:60]}..."'
+        )
+    elif action_type == "propose_coalition":
+        coalition_log.append(
+            f"R{round_num}: {agent_id} proposes coalition: {message[:50]}"
+        )
+    elif action_type == "join_coalition":
+        coalition_log.append(
+            f"R{round_num}: {agent_id} joins coalition {coalition_id}"
+        )
+    elif action_type == "leave_coalition":
+        coalition_log.append(
+            f"R{round_num}: {agent_id} leaves coalition {coalition_id}"
+        )
+    elif action_type == "produce":
+        trade_log.append(
+            f"R{round_num}: {agent_id} produces {commodity} (reward: {obs.reward:.2f})"
+        )
+
+    # Build effect explanation
+    effect_text = _action_effect_explanation(agent_id, action_type, obs, state)
 
     result_text = f"""### Action Result
 **Agent:** {agent_id} | **Action:** {action_type}
@@ -550,8 +813,100 @@ def step_single_agent(agent_id: str, action_type: str, commodity: str,
 **Cash:** ${obs.cash:.2f} | **Reputation:** {obs.reputation:.3f}
 **Inventory:** {json.dumps({k:v for k,v in obs.inventory.items() if v > 0})}
 **Event:** {obs.event}
+
+---
+{effect_text}
 """
-    return result_text
+
+    # Build updated leaderboard with award explanations
+    leaderboard_md = _build_live_leaderboard()
+
+    return result_text, leaderboard_md
+
+
+def _build_live_leaderboard() -> str:
+    """Build a current leaderboard with award explanations from live env state."""
+    try:
+        leaderboard = env.compute_leaderboard()
+        awards = env.compute_awards()
+        champion_id = awards["market_champion"]["agent_id"]
+        strategist_id = awards["master_strategist"]["agent_id"]
+    except Exception:
+        return "*No leaderboard data yet — run a simulation or execute more actions.*"
+
+    lines = [
+        "### Live Leaderboard",
+        "",
+        "| Rank | Agent | Role | Wealth | Strategic | Accuracy | Awards |",
+        "|:----:|-------|------|-------:|:---------:|:--------:|--------|",
+    ]
+    for entry in leaderboard:
+        awards_str = ", ".join(entry["awards_won"]) if entry["awards_won"] else "-"
+        agent_display = entry["agent_id"]
+        if entry["agent_id"] == champion_id:
+            agent_display += " &#x1F3C6;"
+        if entry["agent_id"] == strategist_id:
+            agent_display += " &#x1F9E0;"
+        lines.append(
+            f"| {entry['rank']} | **{agent_display}** | {entry['role']} "
+            f"| ${entry['total_wealth']:,.0f} "
+            f"| {entry['strategic_score']:.3f} "
+            f"| {entry['accuracy']:.0%} "
+            f"| {awards_str} |"
+        )
+    lines.extend([
+        "",
+        "*&#x1F3C6; = Market Champion &nbsp; &#x1F9E0; = Master Strategist*",
+    ])
+
+    # --- Award Explanations ---
+    champ = awards["market_champion"]
+    strat = awards["master_strategist"]
+    strat_breakdown = strat.get("breakdown", {})
+
+    lines.extend([
+        "",
+        "---",
+        "### Why These Winners?",
+        "",
+        f"**&#x1F3C6; Market Champion: {champion_id}**",
+        f"- Highest **total wealth** (cash + inventory market value + compound goods)",
+        f"- Total wealth: **${champ['total_wealth']:,.2f}** "
+        f"(grew by ${champ.get('wealth_growth', 0):+,.2f} from starting capital)",
+        f"- Won by accumulating the most valuable portfolio through smart "
+        f"trading and production decisions",
+        "",
+        f"**&#x1F9E0; Master Strategist: {strategist_id}**",
+        f"- Highest **strategic score** (weighted skill composite): "
+        f"**{strat['strategic_score']:.4f}**",
+        f"- Trade Efficiency: **{strat_breakdown.get('trade_efficiency', 0):.1%}** "
+        f"(35% weight) — profitable trades / total trades",
+        f"- Negotiation Mastery: **{strat_breakdown.get('negotiation_mastery', 0):.1%}** "
+        f"(25% weight) — successful deals / total deals",
+        f"- Cooperation Index: **{strat_breakdown.get('cooperation_index', 0):.1%}** "
+        f"(20% weight) — compound production + coalition activity",
+        f"- Event Adaptability: **{strat_breakdown.get('event_adaptability', 0):.1%}** "
+        f"(20% weight) — actions responding to market events",
+    ])
+
+    # Market summary
+    try:
+        metrics = env.state.market_metrics
+        coal_count = len(env.state.coalitions)
+        lines.extend([
+            "",
+            "---",
+            "### Market Summary",
+            f"- **Total Trades:** {metrics.get('total_trades', 0)} "
+            f"| **Volume:** ${metrics.get('total_volume', 0):,.1f}",
+            f"- **Deals Negotiated:** {metrics.get('deals_negotiated', 0)} "
+            f"| **Active Coalitions:** {coal_count}",
+            f"- **Compound Goods Produced:** {metrics.get('compound_goods_produced', 0)}",
+        ])
+    except Exception:
+        pass
+
+    return "\n".join(lines)
 
 
 # ===========================================================================
@@ -608,6 +963,10 @@ def create_dashboard():
             # ---------------------------------------------------------------
             with gr.TabItem("Manual Control"):
                 gr.Markdown("### Control individual agents manually")
+                gr.Markdown(
+                    "*Select an agent and action type below. Different actions "
+                    "use different fields — see the field labels for guidance.*"
+                )
 
                 with gr.Row():
                     agent_dd = gr.Dropdown(
@@ -616,17 +975,18 @@ def create_dashboard():
                     )
                     action_dd = gr.Dropdown(
                         choices=["buy", "sell", "produce", "negotiate",
-                                 "propose_coalition", "join_coalition", "pass"],
+                                 "propose_coalition", "join_coalition",
+                                 "leave_coalition", "pass"],
                         value="buy", label="Action Type"
                     )
 
                 with gr.Row():
                     commodity_dd = gr.Dropdown(
                         choices=COMMODITIES + list(COMPOUND_GOODS.keys()),
-                        value="wheat", label="Commodity"
+                        value="wheat", label="Commodity (buy/sell/produce)"
                     )
-                    price_input = gr.Number(value=10.0, label="Price")
-                    qty_input = gr.Number(value=5, label="Quantity")
+                    price_input = gr.Number(value=10.0, label="Price (buy/sell)")
+                    qty_input = gr.Number(value=5, label="Quantity (buy/sell)")
 
                 with gr.Row():
                     target_dd = gr.Dropdown(
@@ -634,18 +994,31 @@ def create_dashboard():
                         value="", label="Target Agent (for negotiate)"
                     )
                     msg_input = gr.Textbox(
-                        value="", label="Message (for negotiate/coalition)",
+                        value="", label="Message (negotiate/coalition)",
                         placeholder="Enter negotiation message..."
+                    )
+                    coalition_input = gr.Textbox(
+                        value="",
+                        label="Coalition ID (join/leave coalition)",
+                        placeholder="e.g. abc12345",
                     )
 
                 step_btn = gr.Button("Execute Action", variant="primary")
                 result_output = gr.Markdown(label="Result")
 
+                gr.Markdown("---")
+                leaderboard_output = gr.Markdown(
+                    value="*Execute an action to see the live leaderboard "
+                          "with award explanations.*",
+                    label="Live Leaderboard"
+                )
+
                 step_btn.click(
                     fn=step_single_agent,
                     inputs=[agent_dd, action_dd, commodity_dd,
-                            price_input, qty_input, target_dd, msg_input],
-                    outputs=[result_output],
+                            price_input, qty_input, target_dd, msg_input,
+                            coalition_input],
+                    outputs=[result_output, leaderboard_output],
                 )
 
             # ---------------------------------------------------------------
@@ -810,8 +1183,77 @@ The training loop makes the model **repeatedly more accurate**:
 
 
 # ===========================================================================
+# Custom API routes for monitoring by market-forge-admin
+# ===========================================================================
+
+from fastapi import FastAPI
+from fastapi.responses import JSONResponse
+
+monitoring_app = FastAPI()
+
+@monitoring_app.get("/health")
+def health():
+    return JSONResponse({"status": "ok", "timestamp": time.time()})
+
+@monitoring_app.get("/state")
+def get_state():
+    """Expose the current MarketEnvironment state for the admin dashboard."""
+    try:
+        state = env.state
+        return JSONResponse({
+            "agents": {
+                aid: {
+                    "role": data.get("role", "unknown"),
+                    "cash": data.get("cash", 0),
+                    "reputation": data.get("reputation", 1.0),
+                    "inventory": data.get("inventory", {}),
+                    "last_action": data.get("last_action", {}),
+                    "last_reward": data.get("last_reward", 0),
+                    "actions_taken": data.get("actions_taken", 0),
+                    "valid_actions": data.get("valid_actions", 0),
+                    "cumulative_reward": data.get("cumulative_reward", 0),
+                }
+                for aid, data in state.agents.items()
+            },
+            "round": state.round_number,
+            "current_event": state.current_event,
+            "market_metrics": state.market_metrics,
+            "price_history": {
+                c: prices[-5:] if prices else []
+                for c, prices in state.price_history.items()
+            },
+            "trade_history": [
+                {
+                    "buyer": t.get("buyer", ""),
+                    "seller": t.get("seller", ""),
+                    "commodity": t.get("commodity", ""),
+                    "price": t.get("price", 0),
+                    "quantity": t.get("quantity", 0),
+                }
+                for t in (state.trade_history[-20:] if state.trade_history else [])
+            ],
+            "coalitions": {
+                cid: {
+                    "proposer": coal.get("proposer", ""),
+                    "members": coal.get("members", []),
+                    "objective": coal.get("objective", ""),
+                    "round_formed": coal.get("round_formed", 0),
+                }
+                for cid, coal in state.coalitions.items()
+            },
+            "last_modified": _state_last_modified,
+        })
+    except Exception as e:
+        return JSONResponse({"agents": {}, "round": 0, "current_event": "", "error": str(e)})
+
+
+# ===========================================================================
 # Launch
 # ===========================================================================
 if __name__ == "__main__":
     demo = create_dashboard()
-    demo.launch(server_name="0.0.0.0", server_port=7860, share=False)
+    # Mount monitoring API so admin dashboard can poll /health and /state
+    import gradio as gr
+    app = gr.mount_gradio_app(monitoring_app, demo, path="/")
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=7860)

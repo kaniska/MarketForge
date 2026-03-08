@@ -345,6 +345,17 @@ class MarketEnvironment(Environment):
         else:
             reward = -0.15  # invalid action type
 
+        # --- Persist the last action so /state can expose it to admin ---
+        agent["last_action"] = {
+            "action_type": action.action_type,
+            "commodity": getattr(action, "commodity", ""),
+            "price": getattr(action, "price", 0),
+            "quantity": getattr(action, "quantity", 0),
+            "target_agent": getattr(action, "target_agent", ""),
+            "message": getattr(action, "message", ""),
+        }
+        agent["last_reward"] = reward
+
         # --- Update scoring counters ---
         agent["actions_taken"] = agent.get("actions_taken", 0) + 1
         if is_valid:
