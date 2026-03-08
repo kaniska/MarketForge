@@ -179,3 +179,35 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# VS Code
+.vscode/
+
+# Claude Code
+.claude/
+
+# Playwright MCP
+.playwright-mcp/
+
+# Training artifacts
+training_results.png
+checkpoints/
+wandb/
+runs/
+
+# Office temp files
+~$*
+
+# Generated docs
+*.pptx
+*.docx
+
+# Archives
+*.zip
+*.tar.gz
