@@ -211,3 +211,6 @@ runs/
 # Archives
 *.zip
 *.tar.gz
+
+# macbook temp files
+.DS_Store
