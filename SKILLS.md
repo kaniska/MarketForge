@@ -36,6 +36,29 @@
   - Trade activity feed
   - Market event timeline
 
+## Simulation & Evaluation
+
+- **Run Simulation** — `run_simulation.py` drives a full game episode:
+  - Trained LLM model generates JSON actions from observation prompts
+  - Baseline agents (random or rule-based heuristics) compete alongside
+  - Awards and leaderboard computed at game end
+  - Supports: `--model`, `--llm-agents`, `--baseline-only`, `--rounds`, `--seed`
+
+- **Agent Strategies** — Three built-in agent types in `run_simulation.py`:
+  - `RandomAgent` — picks random legal actions with random parameters
+  - `RuleBasedAgent` — role-aware heuristics (producers sell specialty, consumers buy ingredients, traders exploit spreads, speculators react to events)
+  - `TrainedLLMAgent` — loads a fine-tuned HuggingFace model, feeds observation prompt, parses JSON action output
+
+- **Evaluation & Reporting** — `evaluate_and_report.py` runs multi-episode comparison:
+  - 3 configurations: random-baseline, rule-based-baseline, trained-LLM
+  - Identical seeds across configs for fair comparison
+  - Outputs `evaluation_report.md` (Markdown) and `evaluation_data.json` (raw data)
+  - Report includes: executive summary, per-agent breakdown, episode-by-episode results
+
+- **Winner Determination** — computed by `MarketEnvironment` at game end:
+  - Award 1 (Market Champion): highest total_wealth = cash + inventory_value + compound_value
+  - Award 2 (Master Strategist): 0.35*trade_efficiency + 0.25*negotiation_mastery + 0.20*cooperation_index + 0.20*event_adaptability
+
 ## Deployment Skills
 
 - **HuggingFace Spaces** — Docker-based deployment via `Dockerfile`

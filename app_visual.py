@@ -3,20 +3,151 @@ Multi-Agent MarketForge - Visual Simulation Dashboard
 =======================================================
 Gradio-based interactive dashboard for visualizing the market simulation.
 Covers the Storytelling criterion (30% of judging) with rich visualization.
+
+Supports two simulation modes:
+  - Heuristic-only: all agents use hand-crafted strategies (works everywhere)
+  - Trained LLM:    selected agents use a GRPO-trained model for decisions
+                    (requires torch + a downloaded model checkpoint)
 """
 import gradio as gr
 import json
+import os
 import random
+import re
 import time
 import copy
 from dataclasses import asdict
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 
 from models import MarketAction, MarketObservation
 from server.market_environment import (
     MarketEnvironment, COMMODITIES, COMPOUND_GOODS,
     BASE_PRICES, COMPOUND_PRICES, AGENT_ROLES,
 )
+from rewards import extract_action
+
+# ===========================================================================
+# Trained Model Loader (GPU-aware, graceful fallback)
+# ===========================================================================
+_loaded_model = None
+_loaded_tokenizer = None
+_model_device = None
+_model_load_error: Optional[str] = None
+
+# Resolve model path: env var > local dir > HuggingFace hub ID
+DEFAULT_MODEL_PATH = os.environ.get(
+    "MODEL_DIR",
+    os.environ.get(
+        "MODEL_REPO",
+        "./trained-model"
+        if os.path.isdir("./trained-model")
+        else "Qwen/Qwen2.5-0.5B-Instruct",
+    ),
+)
+
+LLM_SYSTEM_PROMPT = (
+    "You are an autonomous trading agent in a multi-commodity MarketForge.\n"
+    "You trade wheat, iron, timber, and oil. You can produce compound goods.\n\n"
+    "RESPOND WITH EXACTLY ONE JSON OBJECT choosing your action. Valid action_types:\n"
+    "  buy, sell, produce, negotiate, propose_coalition, join_coalition, "
+    "accept_deal, pass\n\n"
+    "EXAMPLES:\n"
+    '  {"action_type":"buy","commodity":"wheat","price":10,"quantity":5}\n'
+    '  {"action_type":"sell","commodity":"iron","price":18,"quantity":3}\n'
+    '  {"action_type":"produce","compound_good":"bread"}\n'
+    '  {"action_type":"negotiate","target_agent":"producer_wheat",'
+    '"commodity":"wheat","price":9,"quantity":10,'
+    '"message":"Bulk discount for wheat?"}\n'
+    '  {"action_type":"pass"}\n\n'
+    "STRATEGY: Buy low, sell high. React to events. Negotiate deals. "
+    "Form coalitions. Produce compound goods when profitable."
+)
+
+
+def load_trained_model(model_path: str = None):
+    """Load the trained model + tokenizer. Returns (model, tokenizer, device, error)."""
+    global _loaded_model, _loaded_tokenizer, _model_device, _model_load_error
+
+    if _loaded_model is not None:
+        return _loaded_model, _loaded_tokenizer, _model_device, None
+
+    path = model_path or DEFAULT_MODEL_PATH
+    try:
+        import torch
+        from transformers import AutoTokenizer, AutoModelForCausalLM
+
+        print(f"[app_visual] Loading trained model from {path} ...")
+        tokenizer = AutoTokenizer.from_pretrained(path)
+        if tokenizer.pad_token is None:
+            tokenizer.pad_token = tokenizer.eos_token
+
+        dtype = torch.float16 if torch.cuda.is_available() else torch.float32
+        device_map = "auto" if torch.cuda.is_available() else "cpu"
+        model = AutoModelForCausalLM.from_pretrained(
+            path, torch_dtype=dtype, device_map=device_map,
+        )
+        model.eval()
+        device = next(model.parameters()).device
+
+        _loaded_model = model
+        _loaded_tokenizer = tokenizer
+        _model_device = device
+        _model_load_error = None
+        print(f"[app_visual] Model loaded on {device} (dtype={dtype})")
+        return model, tokenizer, device, None
+
+    except Exception as e:
+        err = f"{type(e).__name__}: {e}"
+        _model_load_error = err
+        print(f"[app_visual] Model load failed: {err}")
+        return None, None, None, err
+
+
+def llm_decide(obs: MarketObservation, agent_id: str) -> MarketAction:
+    """Generate an action using the loaded trained model."""
+    model, tokenizer, device, err = load_trained_model()
+    if model is None:
+        # Fallback to pass if model unavailable
+        return MarketAction(agent_id=agent_id, action_type="pass")
+
+    import torch
+
+    messages = [
+        {"role": "system", "content": LLM_SYSTEM_PROMPT},
+        {"role": "user", "content": obs.prompt},
+    ]
+    prompt_text = tokenizer.apply_chat_template(
+        messages, add_generation_prompt=True, tokenize=False,
+    )
+    inputs = tokenizer(prompt_text, return_tensors="pt").to(device)
+
+    with torch.no_grad():
+        output_ids = model.generate(
+            **inputs,
+            max_new_tokens=128,
+            do_sample=True,
+            temperature=0.7,
+            top_p=0.9,
+            pad_token_id=tokenizer.pad_token_id,
+        )
+    generated_ids = output_ids[0][inputs["input_ids"].shape[1]:]
+    raw_output = tokenizer.decode(generated_ids, skip_special_tokens=True)
+
+    parsed = extract_action(raw_output)
+    if parsed and "action_type" in parsed:
+        parsed["agent_id"] = agent_id
+        valid_fields = set(MarketAction.__dataclass_fields__.keys())
+        filtered = {k: v for k, v in parsed.items() if k in valid_fields}
+        return MarketAction(**filtered)
+
+    return MarketAction(agent_id=agent_id, action_type="pass")
+
+
+# Try to pre-load the model at startup (non-blocking)
+try:
+    load_trained_model()
+except Exception:
+    pass
 
 # ===========================================================================
 # Simulation Engine (local, no server needed)
@@ -244,8 +375,18 @@ class HeuristicAgent:
 # ===========================================================================
 # Simulation Runner
 # ===========================================================================
-def run_simulation(num_rounds: int = 30, speed: str = "Normal"):
-    """Run a complete market simulation and return visualization data."""
+def run_simulation(
+    num_rounds: int = 30,
+    agent_mode: str = "Heuristic Only",
+    llm_agents_str: str = "trader_1, speculator_1",
+):
+    """Run a complete market simulation and return visualization data.
+
+    Args:
+        num_rounds: Number of game rounds.
+        agent_mode: "Heuristic Only" or "Trained LLM + Heuristic".
+        llm_agents_str: Comma-separated agent IDs to drive with the LLM.
+    """
     global sim_history, agent_wealth_history, price_chart_data
     global reward_history, trade_log, coalition_log, negotiation_log
     global _state_last_modified
@@ -258,9 +399,24 @@ def run_simulation(num_rounds: int = 30, speed: str = "Normal"):
     coalition_log = []
     negotiation_log = []
 
+    # Determine which agents use the trained LLM
+    use_llm = agent_mode == "Trained LLM + Heuristic"
+    llm_agent_ids = set()
+    if use_llm:
+        llm_agent_ids = {a.strip() for a in llm_agents_str.split(",") if a.strip()}
+        # Validate model is loadable
+        _, _, _, err = load_trained_model()
+        if err:
+            use_llm = False
+            llm_agent_ids = set()
+            trade_log.append(
+                f"**[WARNING]** Trained model unavailable ({err}). "
+                f"Falling back to heuristic for all agents."
+            )
+
     obs = env.reset(max_rounds=num_rounds)
 
-    # Create heuristic agents
+    # Create heuristic agents (used for all agents not driven by LLM)
     agents = {}
     for aid, config in AGENT_ROLES.items():
         agents[aid] = HeuristicAgent(
@@ -274,7 +430,13 @@ def run_simulation(num_rounds: int = 30, speed: str = "Normal"):
         round_rewards = {}
         for aid, agent in agents.items():
             obs = env._make_observation(aid)
-            action = agent.decide(obs)
+
+            # Choose decision source: trained LLM or heuristic
+            if use_llm and aid in llm_agent_ids:
+                action = llm_decide(obs, aid)
+            else:
+                action = agent.decide(obs)
+
             result_obs = env.step(action)
             round_rewards[aid] = result_obs.reward
             total_rewards[aid] += result_obs.reward
@@ -326,11 +488,12 @@ def run_simulation(num_rounds: int = 30, speed: str = "Normal"):
         })
 
     _state_last_modified = time.time()
-    return _format_results(num_rounds, total_rewards)
+    return _format_results(num_rounds, total_rewards, llm_agent_ids)
 
 
-def _format_results(num_rounds, total_rewards):
+def _format_results(num_rounds, total_rewards, llm_agent_ids=None):
     """Format simulation results for Gradio display with Awards and Scoring."""
+    llm_agent_ids = llm_agent_ids or set()
 
     # Compute Awards, Leaderboard, Accuracy
     state = env.state
@@ -395,6 +558,18 @@ def _format_results(num_rounds, total_rewards):
             f"adapting behaviour to market shocks.",
         ])
 
+    # ---- Agent Mode Banner ----
+    if llm_agent_ids:
+        summary_lines.extend([
+            "",
+            "---",
+            "",
+            "## AGENT MODE",
+            f"**Trained LLM agents:** {', '.join(sorted(llm_agent_ids))}",
+            f"**Heuristic agents:** {', '.join(a for a in AGENT_ROLES if a not in llm_agent_ids)}",
+            f"**Model:** `{DEFAULT_MODEL_PATH}`",
+        ])
+
     # ---- Leaderboard Table ----
     summary_lines.extend([
         "",
@@ -402,13 +577,14 @@ def _format_results(num_rounds, total_rewards):
         "",
         "## LEADERBOARD & SCORING",
         "",
-        "| Rank | Agent | Role | Wealth | Strategic | Accuracy | Awards |",
-        "|------|-------|------|--------|-----------|----------|--------|",
+        "| Rank | Agent | Strategy | Role | Wealth | Strategic | Accuracy | Awards |",
+        "|------|-------|----------|------|--------|-----------|----------|--------|",
     ])
     for entry in leaderboard:
         awards_str = ", ".join(entry["awards_won"]) if entry["awards_won"] else "-"
+        strategy_tag = "**LLM**" if entry["agent_id"] in llm_agent_ids else "heuristic"
         summary_lines.append(
-            f"| {entry['rank']} | {entry['agent_id']} | {entry['role']} "
+            f"| {entry['rank']} | {entry['agent_id']} | {strategy_tag} | {entry['role']} "
             f"| ${entry['total_wealth']:,.0f} "
             f"| {entry['strategic_score']:.3f} "
             f"| {entry['accuracy']:.0%} "
@@ -938,12 +1114,46 @@ def create_dashboard():
             # Tab 1: Auto Simulation
             # ---------------------------------------------------------------
             with gr.TabItem("Simulation"):
+                # ---- Model status banner ----
+                model_status = (
+                    f"Trained model loaded: **{DEFAULT_MODEL_PATH}** "
+                    f"(device: {_model_device})"
+                    if _loaded_model is not None
+                    else (
+                        f"Trained model **not available** "
+                        f"({_model_load_error or 'torch not installed'}). "
+                        f"Simulation will use heuristic agents only."
+                    )
+                )
+                gr.Markdown(f"> {model_status}")
+
                 with gr.Row():
                     num_rounds = gr.Slider(
                         minimum=10, maximum=100, value=30, step=5,
                         label="Number of Rounds"
                     )
-                    run_btn = gr.Button("Run Simulation", variant="primary", size="lg")
+                    agent_mode = gr.Radio(
+                        choices=["Heuristic Only", "Trained LLM + Heuristic"],
+                        value=(
+                            "Trained LLM + Heuristic"
+                            if _loaded_model is not None
+                            else "Heuristic Only"
+                        ),
+                        label="Agent Mode",
+                        interactive=_loaded_model is not None,
+                    )
+
+                with gr.Row():
+                    llm_agents_dd = gr.Dropdown(
+                        choices=list(AGENT_ROLES.keys()),
+                        value=["trader_1", "speculator_1"],
+                        multiselect=True,
+                        label="LLM-Controlled Agents (select one or more)",
+                        interactive=_loaded_model is not None,
+                    )
+                    run_btn = gr.Button(
+                        "Run Simulation", variant="primary", size="lg"
+                    )
 
                 summary_output = gr.Markdown(label="Summary")
                 chart_output = gr.Plot(label="Dashboard Charts")
@@ -952,9 +1162,14 @@ def create_dashboard():
                     log_output = gr.Markdown(label="Activity Log")
                     event_output = gr.Markdown(label="Event Timeline")
 
+                def _run_sim_wrapper(rounds, mode, llm_agents_list):
+                    """Wrapper to convert multi-select list to comma string."""
+                    llm_str = ", ".join(llm_agents_list) if llm_agents_list else ""
+                    return run_simulation(int(rounds), mode, llm_str)
+
                 run_btn.click(
-                    fn=run_simulation,
-                    inputs=[num_rounds],
+                    fn=_run_sim_wrapper,
+                    inputs=[num_rounds, agent_mode, llm_agents_dd],
                     outputs=[summary_output, chart_output, log_output, event_output],
                 )
 

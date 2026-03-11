@@ -1,0 +1,2028 @@
+{
+  "random-baseline": {
+    "config": {
+      "model_path": null,
+      "llm_agent_ids": [],
+      "baseline_type": "random"
+    },
+    "episodes": [
+      {
+        "awards": {
+          "market_champion": {
+            "agent_id": "producer_oil",
+            "total_wealth": 2868.47,
+            "wealth_growth": 1368.47,
+            "all_scores": {
+              "producer_oil": 2868.47,
+              "producer_iron": 2454.17,
+              "producer_timber": 2261.25,
+              "producer_wheat": 1738.92,
+              "speculator_1": 1487.49,
+              "trader_1": 1061.1,
+              "consumer_2": 996.08,
+              "consumer_1": 981.58
+            }
+          },
+          "master_strategist": {
+            "agent_id": "speculator_1",
+            "strategic_score": 0.88,
+            "breakdown": {
+              "trade_efficiency": 1.0,
+              "negotiation_mastery": 1.0,
+              "cooperation_index": 0.4,
+              "event_adaptability": 1.0
+            },
+            "all_scores": {
+              "speculator_1": 0.88,
+              "producer_wheat": 0.8467,
+              "producer_oil": 0.795,
+              "consumer_2": 0.695,
+              "trader_1": 0.6167,
+              "producer_timber": 0.615,
+              "producer_iron": 0.4233,
+              "consumer_1": 0.4167
+            }
+          }
+        },
+        "leaderboard": [
+          {
+            "agent_id": "producer_oil",
+            "role": "producer",
+            "total_wealth": 2868.47,
+            "wealth_growth": 1648.47,
+            "strategic_score": 0.795,
+            "cumulative_reward": 0.71,
+            "accuracy": 1.0,
+            "total_trades": 3,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [
+              "Market Champion"
+            ],
+            "rank": 1,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "producer_iron",
+            "role": "producer",
+            "total_wealth": 2454.17,
+            "wealth_growth": 1354.17,
+            "strategic_score": 0.4233,
+            "cumulative_reward": -0.19,
+            "accuracy": 1.0,
+            "total_trades": 2,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 0.76,
+            "awards_won": [],
+            "rank": 2,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "producer_timber",
+            "role": "producer",
+            "total_wealth": 2261.25,
+            "wealth_growth": 1281.25,
+            "strategic_score": 0.615,
+            "cumulative_reward": 1.574,
+            "accuracy": 1.0,
+            "total_trades": 5,
+            "successful_deals": 2,
+            "compound_produced": 0,
+            "reputation": 0.88,
+            "awards_won": [],
+            "rank": 3,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "producer_wheat",
+            "role": "producer",
+            "total_wealth": 1738.92,
+            "wealth_growth": 838.92,
+            "strategic_score": 0.8467,
+            "cumulative_reward": 0.91,
+            "accuracy": 1.0,
+            "total_trades": 4,
+            "successful_deals": 1,
+            "compound_produced": 0,
+            "reputation": 1.02,
+            "awards_won": [],
+            "rank": 4,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "speculator_1",
+            "role": "speculator",
+            "total_wealth": 1487.49,
+            "wealth_growth": -12.51,
+            "strategic_score": 0.88,
+            "cumulative_reward": -0.259,
+            "accuracy": 1.0,
+            "total_trades": 1,
+            "successful_deals": 1,
+            "compound_produced": 1,
+            "reputation": 1.02,
+            "awards_won": [
+              "Master Strategist"
+            ],
+            "rank": 5,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "trader_1",
+            "role": "trader",
+            "total_wealth": 1061.1,
+            "wealth_growth": -13.9,
+            "strategic_score": 0.6167,
+            "cumulative_reward": 1.527,
+            "accuracy": 1.0,
+            "total_trades": 4,
+            "successful_deals": 0,
+            "compound_produced": 4,
+            "reputation": 0.92,
+            "awards_won": [],
+            "rank": 6,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "consumer_2",
+            "role": "consumer",
+            "total_wealth": 996.08,
+            "wealth_growth": -3.92,
+            "strategic_score": 0.695,
+            "cumulative_reward": -0.59,
+            "accuracy": 1.0,
+            "total_trades": 1,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 7,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "consumer_1",
+            "role": "consumer",
+            "total_wealth": 981.58,
+            "wealth_growth": -18.42,
+            "strategic_score": 0.4167,
+            "cumulative_reward": -0.28,
+            "accuracy": 1.0,
+            "total_trades": 2,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 0.84,
+            "awards_won": [],
+            "rank": 8,
+            "strategy": "random"
+          }
+        ],
+        "market_metrics": {
+          "total_trades": 11,
+          "total_volume": 560.5000000000001,
+          "coalitions_formed": 20,
+          "deals_negotiated": 17,
+          "compound_goods_produced": 5
+        },
+        "total_rounds": 20
+      },
+      {
+        "awards": {
+          "market_champion": {
+            "agent_id": "producer_timber",
+            "total_wealth": 5013.0,
+            "wealth_growth": 3513.0,
+            "all_scores": {
+              "producer_timber": 5013.0,
+              "producer_iron": 3726.5,
+              "speculator_1": 1500.0,
+              "trader_1": 1055.95,
+              "consumer_1": 1029.5,
+              "consumer_2": 1000.0,
+              "producer_wheat": 829.0,
+              "producer_oil": 693.05
+            }
+          },
+          "master_strategist": {
+            "agent_id": "trader_1",
+            "strategic_score": 0.5833,
+            "breakdown": {
+              "trade_efficiency": 1.0,
+              "negotiation_mastery": 0.0,
+              "cooperation_index": 0.5,
+              "event_adaptability": 0.6667
+            },
+            "all_scores": {
+              "trader_1": 0.5833,
+              "consumer_1": 0.2517,
+              "producer_iron": 0.225,
+              "producer_timber": 0.2117,
+              "producer_oil": 0.1,
+              "producer_wheat": 0.0733,
+              "speculator_1": 0.0733,
+              "consumer_2": 0.0667
+            }
+          }
+        },
+        "leaderboard": [
+          {
+            "agent_id": "producer_timber",
+            "role": "producer",
+            "total_wealth": 5013.0,
+            "wealth_growth": 4033.0,
+            "strategic_score": 0.2117,
+            "cumulative_reward": -1.608,
+            "accuracy": 1.0,
+            "total_trades": 0,
+            "successful_deals": 1,
+            "compound_produced": 0,
+            "reputation": 0.94,
+            "awards_won": [
+              "Market Champion"
+            ],
+            "rank": 1,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "producer_iron",
+            "role": "producer",
+            "total_wealth": 3726.5,
+            "wealth_growth": 2626.5,
+            "strategic_score": 0.225,
+            "cumulative_reward": -1.12,
+            "accuracy": 1.0,
+            "total_trades": 0,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 2,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "speculator_1",
+            "role": "speculator",
+            "total_wealth": 1500.0,
+            "wealth_growth": 0.0,
+            "strategic_score": 0.0733,
+            "cumulative_reward": -0.38,
+            "accuracy": 1.0,
+            "total_trades": 0,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 0.68,
+            "awards_won": [],
+            "rank": 3,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "trader_1",
+            "role": "trader",
+            "total_wealth": 1055.95,
+            "wealth_growth": -19.05,
+            "strategic_score": 0.5833,
+            "cumulative_reward": 0.17,
+            "accuracy": 1.0,
+            "total_trades": 2,
+            "successful_deals": 0,
+            "compound_produced": 1,
+            "reputation": 0.84,
+            "awards_won": [
+              "Master Strategist"
+            ],
+            "rank": 4,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "consumer_1",
+            "role": "consumer",
+            "total_wealth": 1029.5,
+            "wealth_growth": 29.5,
+            "strategic_score": 0.2517,
+            "cumulative_reward": -0.73,
+            "accuracy": 1.0,
+            "total_trades": 0,
+            "successful_deals": 1,
+            "compound_produced": 0,
+            "reputation": 0.94,
+            "awards_won": [],
+            "rank": 5,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "consumer_2",
+            "role": "consumer",
+            "total_wealth": 1000.0,
+            "wealth_growth": 0.0,
+            "strategic_score": 0.0667,
+            "cumulative_reward": -1.23,
+            "accuracy": 1.0,
+            "total_trades": 0,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 0.92,
+            "awards_won": [],
+            "rank": 6,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "producer_wheat",
+            "role": "producer",
+            "total_wealth": 829.0,
+            "wealth_growth": -71.0,
+            "strategic_score": 0.0733,
+            "cumulative_reward": -0.65,
+            "accuracy": 1.0,
+            "total_trades": 0,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 0.92,
+            "awards_won": [],
+            "rank": 7,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "producer_oil",
+            "role": "producer",
+            "total_wealth": 693.05,
+            "wealth_growth": -526.95,
+            "strategic_score": 0.1,
+            "cumulative_reward": 0.23,
+            "accuracy": 1.0,
+            "total_trades": 0,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 0.84,
+            "awards_won": [],
+            "rank": 8,
+            "strategy": "random"
+          }
+        ],
+        "market_metrics": {
+          "total_trades": 1,
+          "total_volume": 47.4,
+          "coalitions_formed": 16,
+          "deals_negotiated": 13,
+          "compound_goods_produced": 1
+        },
+        "total_rounds": 20
+      },
+      {
+        "awards": {
+          "market_champion": {
+            "agent_id": "producer_timber",
+            "total_wealth": 7573.32,
+            "wealth_growth": 6073.32,
+            "all_scores": {
+              "producer_timber": 7573.32,
+              "producer_wheat": 3911.25,
+              "producer_iron": 2411.66,
+              "speculator_1": 1487.62,
+              "trader_1": 1266.1,
+              "consumer_2": 1000.0,
+              "consumer_1": 927.88,
+              "producer_oil": 812.71
+            }
+          },
+          "master_strategist": {
+            "agent_id": "trader_1",
+            "strategic_score": 0.9333,
+            "breakdown": {
+              "trade_efficiency": 1.0,
+              "negotiation_mastery": 1.0,
+              "cooperation_index": 1.0,
+              "event_adaptability": 0.6667
+            },
+            "all_scores": {
+              "trader_1": 0.9333,
+              "producer_oil": 0.6883,
+              "speculator_1": 0.5417,
+              "producer_wheat": 0.45,
+              "producer_timber": 0.45,
+              "consumer_2": 0.2317,
+              "consumer_1": 0.1492,
+              "producer_iron": 0.1333
+            }
+          }
+        },
+        "leaderboard": [
+          {
+            "agent_id": "producer_timber",
+            "role": "producer",
+            "total_wealth": 7573.32,
+            "wealth_growth": 6593.32,
+            "strategic_score": 0.45,
+            "cumulative_reward": -0.842,
+            "accuracy": 1.0,
+            "total_trades": 2,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 0.84,
+            "awards_won": [
+              "Market Champion"
+            ],
+            "rank": 1,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "producer_wheat",
+            "role": "producer",
+            "total_wealth": 3911.25,
+            "wealth_growth": 3011.25,
+            "strategic_score": 0.45,
+            "cumulative_reward": 0.62,
+            "accuracy": 1.0,
+            "total_trades": 4,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 0.92,
+            "awards_won": [],
+            "rank": 2,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "producer_iron",
+            "role": "producer",
+            "total_wealth": 2411.66,
+            "wealth_growth": 1311.66,
+            "strategic_score": 0.1333,
+            "cumulative_reward": -0.14,
+            "accuracy": 1.0,
+            "total_trades": 0,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 0.84,
+            "awards_won": [],
+            "rank": 3,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "speculator_1",
+            "role": "speculator",
+            "total_wealth": 1487.62,
+            "wealth_growth": -12.38,
+            "strategic_score": 0.5417,
+            "cumulative_reward": -1.53,
+            "accuracy": 1.0,
+            "total_trades": 1,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 4,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "trader_1",
+            "role": "trader",
+            "total_wealth": 1266.1,
+            "wealth_growth": 191.1,
+            "strategic_score": 0.9333,
+            "cumulative_reward": 1.3,
+            "accuracy": 1.0,
+            "total_trades": 1,
+            "successful_deals": 1,
+            "compound_produced": 1,
+            "reputation": 1.02,
+            "awards_won": [
+              "Master Strategist"
+            ],
+            "rank": 5,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "consumer_2",
+            "role": "consumer",
+            "total_wealth": 1000.0,
+            "wealth_growth": 0.0,
+            "strategic_score": 0.2317,
+            "cumulative_reward": -1.39,
+            "accuracy": 1.0,
+            "total_trades": 0,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 6,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "consumer_1",
+            "role": "consumer",
+            "total_wealth": 927.88,
+            "wealth_growth": -72.12,
+            "strategic_score": 0.1492,
+            "cumulative_reward": -0.86,
+            "accuracy": 1.0,
+            "total_trades": 0,
+            "successful_deals": 1,
+            "compound_produced": 0,
+            "reputation": 0.78,
+            "awards_won": [],
+            "rank": 7,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "producer_oil",
+            "role": "producer",
+            "total_wealth": 812.71,
+            "wealth_growth": -407.29,
+            "strategic_score": 0.6883,
+            "cumulative_reward": 0.38,
+            "accuracy": 1.0,
+            "total_trades": 2,
+            "successful_deals": 0,
+            "compound_produced": 1,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 8,
+            "strategy": "random"
+          }
+        ],
+        "market_metrics": {
+          "total_trades": 5,
+          "total_volume": 328.55,
+          "coalitions_formed": 15,
+          "deals_negotiated": 24,
+          "compound_goods_produced": 2
+        },
+        "total_rounds": 20
+      },
+      {
+        "awards": {
+          "market_champion": {
+            "agent_id": "producer_oil",
+            "total_wealth": 3156.8,
+            "wealth_growth": 1656.8,
+            "all_scores": {
+              "producer_oil": 3156.8,
+              "speculator_1": 1500.0,
+              "producer_timber": 1379.13,
+              "trader_1": 972.0,
+              "consumer_2": 961.48,
+              "consumer_1": 949.6,
+              "producer_wheat": 712.35,
+              "producer_iron": 695.4
+            }
+          },
+          "master_strategist": {
+            "agent_id": "trader_1",
+            "strategic_score": 0.71,
+            "breakdown": {
+              "trade_efficiency": 1.0,
+              "negotiation_mastery": 0.0,
+              "cooperation_index": 0.8,
+              "event_adaptability": 1.0
+            },
+            "all_scores": {
+              "trader_1": 0.71,
+              "consumer_2": 0.655,
+              "producer_oil": 0.5567,
+              "consumer_1": 0.45,
+              "producer_iron": 0.3183,
+              "producer_wheat": 0.265,
+              "speculator_1": 0.2133,
+              "producer_timber": 0.1333
+            }
+          }
+        },
+        "leaderboard": [
+          {
+            "agent_id": "producer_oil",
+            "role": "producer",
+            "total_wealth": 3156.8,
+            "wealth_growth": 1936.8,
+            "strategic_score": 0.5567,
+            "cumulative_reward": 0.26,
+            "accuracy": 1.0,
+            "total_trades": 4,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 0.84,
+            "awards_won": [
+              "Market Champion"
+            ],
+            "rank": 1,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "speculator_1",
+            "role": "speculator",
+            "total_wealth": 1500.0,
+            "wealth_growth": 0.0,
+            "strategic_score": 0.2133,
+            "cumulative_reward": -0.18,
+            "accuracy": 1.0,
+            "total_trades": 0,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 0.84,
+            "awards_won": [],
+            "rank": 2,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "producer_timber",
+            "role": "producer",
+            "total_wealth": 1379.13,
+            "wealth_growth": 399.13,
+            "strategic_score": 0.1333,
+            "cumulative_reward": -0.78,
+            "accuracy": 1.0,
+            "total_trades": 0,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 0.92,
+            "awards_won": [],
+            "rank": 3,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "trader_1",
+            "role": "trader",
+            "total_wealth": 972.0,
+            "wealth_growth": -103.0,
+            "strategic_score": 0.71,
+            "cumulative_reward": 1.471,
+            "accuracy": 1.0,
+            "total_trades": 1,
+            "successful_deals": 0,
+            "compound_produced": 2,
+            "reputation": 0.84,
+            "awards_won": [
+              "Master Strategist"
+            ],
+            "rank": 4,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "consumer_2",
+            "role": "consumer",
+            "total_wealth": 961.48,
+            "wealth_growth": -38.52,
+            "strategic_score": 0.655,
+            "cumulative_reward": -0.48,
+            "accuracy": 1.0,
+            "total_trades": 1,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 5,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "consumer_1",
+            "role": "consumer",
+            "total_wealth": 949.6,
+            "wealth_growth": -50.4,
+            "strategic_score": 0.45,
+            "cumulative_reward": -1.0,
+            "accuracy": 1.0,
+            "total_trades": 0,
+            "successful_deals": 1,
+            "compound_produced": 0,
+            "reputation": 1.02,
+            "awards_won": [],
+            "rank": 6,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "producer_wheat",
+            "role": "producer",
+            "total_wealth": 712.35,
+            "wealth_growth": -187.65,
+            "strategic_score": 0.265,
+            "cumulative_reward": -0.4,
+            "accuracy": 1.0,
+            "total_trades": 0,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 7,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "producer_iron",
+            "role": "producer",
+            "total_wealth": 695.4,
+            "wealth_growth": -404.6,
+            "strategic_score": 0.3183,
+            "cumulative_reward": -0.406,
+            "accuracy": 1.0,
+            "total_trades": 0,
+            "successful_deals": 1,
+            "compound_produced": 0,
+            "reputation": 0.94,
+            "awards_won": [],
+            "rank": 8,
+            "strategy": "random"
+          }
+        ],
+        "market_metrics": {
+          "total_trades": 3,
+          "total_volume": 255.20000000000005,
+          "coalitions_formed": 18,
+          "deals_negotiated": 24,
+          "compound_goods_produced": 2
+        },
+        "total_rounds": 20
+      },
+      {
+        "awards": {
+          "market_champion": {
+            "agent_id": "producer_timber",
+            "total_wealth": 5468.46,
+            "wealth_growth": 3968.46,
+            "all_scores": {
+              "producer_timber": 5468.46,
+              "producer_wheat": 4154.28,
+              "producer_iron": 3055.12,
+              "producer_oil": 2170.6,
+              "speculator_1": 1483.88,
+              "trader_1": 1178.27,
+              "consumer_1": 1000.0,
+              "consumer_2": 1000.0
+            }
+          },
+          "master_strategist": {
+            "agent_id": "producer_wheat",
+            "strategic_score": 0.8067,
+            "breakdown": {
+              "trade_efficiency": 1.0,
+              "negotiation_mastery": 1.0,
+              "cooperation_index": 0.7,
+              "event_adaptability": 0.3333
+            },
+            "all_scores": {
+              "producer_wheat": 0.8067,
+              "producer_oil": 0.6633,
+              "speculator_1": 0.6017,
+              "trader_1": 0.35,
+              "producer_iron": 0.325,
+              "consumer_2": 0.1533,
+              "consumer_1": 0.1133,
+              "producer_timber": 0.0667
+            }
+          }
+        },
+        "leaderboard": [
+          {
+            "agent_id": "producer_timber",
+            "role": "producer",
+            "total_wealth": 5468.46,
+            "wealth_growth": 4488.46,
+            "strategic_score": 0.0667,
+            "cumulative_reward": -1.21,
+            "accuracy": 1.0,
+            "total_trades": 0,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 0.84,
+            "awards_won": [
+              "Market Champion"
+            ],
+            "rank": 1,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "producer_wheat",
+            "role": "producer",
+            "total_wealth": 4154.28,
+            "wealth_growth": 3254.28,
+            "strategic_score": 0.8067,
+            "cumulative_reward": -0.11,
+            "accuracy": 1.0,
+            "total_trades": 2,
+            "successful_deals": 1,
+            "compound_produced": 0,
+            "reputation": 1.02,
+            "awards_won": [
+              "Master Strategist"
+            ],
+            "rank": 2,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "producer_iron",
+            "role": "producer",
+            "total_wealth": 3055.12,
+            "wealth_growth": 1955.12,
+            "strategic_score": 0.325,
+            "cumulative_reward": 0.11,
+            "accuracy": 1.0,
+            "total_trades": 0,
+            "successful_deals": 1,
+            "compound_produced": 0,
+            "reputation": 0.94,
+            "awards_won": [],
+            "rank": 3,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "producer_oil",
+            "role": "producer",
+            "total_wealth": 2170.6,
+            "wealth_growth": 950.6,
+            "strategic_score": 0.6633,
+            "cumulative_reward": 1.026,
+            "accuracy": 1.0,
+            "total_trades": 3,
+            "successful_deals": 2,
+            "compound_produced": 0,
+            "reputation": 0.96,
+            "awards_won": [],
+            "rank": 4,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "speculator_1",
+            "role": "speculator",
+            "total_wealth": 1483.88,
+            "wealth_growth": -16.12,
+            "strategic_score": 0.6017,
+            "cumulative_reward": 0.51,
+            "accuracy": 1.0,
+            "total_trades": 1,
+            "successful_deals": 1,
+            "compound_produced": 0,
+            "reputation": 0.94,
+            "awards_won": [],
+            "rank": 5,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "trader_1",
+            "role": "trader",
+            "total_wealth": 1178.27,
+            "wealth_growth": 103.27,
+            "strategic_score": 0.35,
+            "cumulative_reward": 0.592,
+            "accuracy": 1.0,
+            "total_trades": 0,
+            "successful_deals": 1,
+            "compound_produced": 2,
+            "reputation": 0.86,
+            "awards_won": [],
+            "rank": 6,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "consumer_2",
+            "role": "consumer",
+            "total_wealth": 1000.0,
+            "wealth_growth": 0.0,
+            "strategic_score": 0.1533,
+            "cumulative_reward": -0.5,
+            "accuracy": 1.0,
+            "total_trades": 0,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 0.84,
+            "awards_won": [],
+            "rank": 7,
+            "strategy": "random"
+          },
+          {
+            "agent_id": "consumer_1",
+            "role": "consumer",
+            "total_wealth": 1000.0,
+            "wealth_growth": 0.0,
+            "strategic_score": 0.1133,
+            "cumulative_reward": -0.71,
+            "accuracy": 1.0,
+            "total_trades": 0,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 0.76,
+            "awards_won": [],
+            "rank": 8,
+            "strategy": "random"
+          }
+        ],
+        "market_metrics": {
+          "total_trades": 3,
+          "total_volume": 279.75,
+          "coalitions_formed": 29,
+          "deals_negotiated": 18,
+          "compound_goods_produced": 2
+        },
+        "total_rounds": 20
+      }
+    ],
+    "summary": {
+      "num_episodes": 5,
+      "agent_summaries": {
+        "producer_oil": {
+          "avg_wealth": 1940.33,
+          "avg_growth": 720.33,
+          "avg_strategic": 0.5607,
+          "avg_rank": 4.4,
+          "champion_wins": 2,
+          "strategist_wins": 0,
+          "is_llm_agent": false
+        },
+        "producer_iron": {
+          "avg_wealth": 2468.57,
+          "avg_growth": 1368.57,
+          "avg_strategic": 0.285,
+          "avg_rank": 3.6,
+          "champion_wins": 0,
+          "strategist_wins": 0,
+          "is_llm_agent": false
+        },
+        "producer_timber": {
+          "avg_wealth": 4339.03,
+          "avg_growth": 3359.03,
+          "avg_strategic": 0.2953,
+          "avg_rank": 1.8,
+          "champion_wins": 3,
+          "strategist_wins": 0,
+          "is_llm_agent": false
+        },
+        "producer_wheat": {
+          "avg_wealth": 2269.16,
+          "avg_growth": 1369.16,
+          "avg_strategic": 0.4883,
+          "avg_rank": 4.4,
+          "champion_wins": 0,
+          "strategist_wins": 1,
+          "is_llm_agent": false
+        },
+        "speculator_1": {
+          "avg_wealth": 1491.8,
+          "avg_growth": -8.2,
+          "avg_strategic": 0.462,
+          "avg_rank": 3.8,
+          "champion_wins": 0,
+          "strategist_wins": 1,
+          "is_llm_agent": true
+        },
+        "trader_1": {
+          "avg_wealth": 1106.68,
+          "avg_growth": 31.68,
+          "avg_strategic": 0.6387,
+          "avg_rank": 5.0,
+          "champion_wins": 0,
+          "strategist_wins": 3,
+          "is_llm_agent": true
+        },
+        "consumer_2": {
+          "avg_wealth": 991.51,
+          "avg_growth": -8.49,
+          "avg_strategic": 0.3603,
+          "avg_rank": 6.2,
+          "champion_wins": 0,
+          "strategist_wins": 0,
+          "is_llm_agent": false
+        },
+        "consumer_1": {
+          "avg_wealth": 977.71,
+          "avg_growth": -22.29,
+          "avg_strategic": 0.2762,
+          "avg_rank": 6.8,
+          "champion_wins": 0,
+          "strategist_wins": 0,
+          "is_llm_agent": false
+        }
+      },
+      "llm_agents": {
+        "ids": [
+          "trader_1",
+          "speculator_1"
+        ],
+        "avg_wealth": 1299.24,
+        "avg_growth": 11.74,
+        "avg_strategic": 0.5504,
+        "avg_rank": 4.4,
+        "champion_wins": 0,
+        "strategist_wins": 4
+      },
+      "baseline_agents": {
+        "avg_wealth": 2164.38,
+        "avg_growth": 1131.05,
+        "avg_strategic": 0.3776,
+        "avg_rank": 4.53
+      },
+      "market_activity": {
+        "avg_trades": 4.6,
+        "avg_volume": 294.28
+      }
+    }
+  },
+  "rule-based-baseline": {
+    "config": {
+      "model_path": null,
+      "llm_agent_ids": [],
+      "baseline_type": "rule-based"
+    },
+    "episodes": [
+      {
+        "awards": {
+          "market_champion": {
+            "agent_id": "producer_oil",
+            "total_wealth": 3273.99,
+            "wealth_growth": 1773.99,
+            "all_scores": {
+              "producer_oil": 3273.99,
+              "producer_timber": 2310.35,
+              "producer_iron": 2261.2,
+              "producer_wheat": 2117.3,
+              "speculator_1": 1474.1,
+              "trader_1": 1053.3,
+              "consumer_1": 952.27,
+              "consumer_2": 952.27
+            }
+          },
+          "master_strategist": {
+            "agent_id": "consumer_1",
+            "strategic_score": 0.8417,
+            "breakdown": {
+              "trade_efficiency": 1.0,
+              "negotiation_mastery": 0.5,
+              "cooperation_index": 1.0,
+              "event_adaptability": 0.8333
+            },
+            "all_scores": {
+              "consumer_1": 0.8417,
+              "consumer_2": 0.8417,
+              "producer_oil": 0.675,
+              "speculator_1": 0.675,
+              "producer_wheat": 0.6417,
+              "trader_1": 0.6417,
+              "producer_timber": 0.325,
+              "producer_iron": 0.2917
+            }
+          }
+        },
+        "leaderboard": [
+          {
+            "agent_id": "producer_oil",
+            "role": "producer",
+            "total_wealth": 3273.99,
+            "wealth_growth": 2053.99,
+            "strategic_score": 0.675,
+            "cumulative_reward": 0.4,
+            "accuracy": 1.0,
+            "total_trades": 23,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [
+              "Market Champion"
+            ],
+            "rank": 1,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "producer_timber",
+            "role": "producer",
+            "total_wealth": 2310.35,
+            "wealth_growth": 1330.35,
+            "strategic_score": 0.325,
+            "cumulative_reward": 0.4,
+            "accuracy": 1.0,
+            "total_trades": 0,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 2,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "producer_iron",
+            "role": "producer",
+            "total_wealth": 2261.2,
+            "wealth_growth": 1161.2,
+            "strategic_score": 0.2917,
+            "cumulative_reward": 0.4,
+            "accuracy": 1.0,
+            "total_trades": 0,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 3,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "producer_wheat",
+            "role": "producer",
+            "total_wealth": 2117.3,
+            "wealth_growth": 1217.3,
+            "strategic_score": 0.6417,
+            "cumulative_reward": 0.4,
+            "accuracy": 1.0,
+            "total_trades": 40,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 4,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "speculator_1",
+            "role": "speculator",
+            "total_wealth": 1474.1,
+            "wealth_growth": -25.9,
+            "strategic_score": 0.675,
+            "cumulative_reward": 3.144,
+            "accuracy": 1.0,
+            "total_trades": 11,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 5,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "trader_1",
+            "role": "trader",
+            "total_wealth": 1053.3,
+            "wealth_growth": -21.7,
+            "strategic_score": 0.6417,
+            "cumulative_reward": 7.62,
+            "accuracy": 1.0,
+            "total_trades": 23,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 6,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "consumer_1",
+            "role": "consumer",
+            "total_wealth": 952.27,
+            "wealth_growth": -47.73,
+            "strategic_score": 0.8417,
+            "cumulative_reward": 7.884,
+            "accuracy": 1.0,
+            "total_trades": 15,
+            "successful_deals": 0,
+            "compound_produced": 6,
+            "reputation": 1.0,
+            "awards_won": [
+              "Master Strategist"
+            ],
+            "rank": 7,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "consumer_2",
+            "role": "consumer",
+            "total_wealth": 952.27,
+            "wealth_growth": -47.73,
+            "strategic_score": 0.8417,
+            "cumulative_reward": 7.584,
+            "accuracy": 1.0,
+            "total_trades": 14,
+            "successful_deals": 0,
+            "compound_produced": 6,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 8,
+            "strategy": "rule-based"
+          }
+        ],
+        "market_metrics": {
+          "total_trades": 63,
+          "total_volume": 2046.599999999999,
+          "coalitions_formed": 0,
+          "deals_negotiated": 0,
+          "compound_goods_produced": 12
+        },
+        "total_rounds": 20
+      },
+      {
+        "awards": {
+          "market_champion": {
+            "agent_id": "producer_oil",
+            "total_wealth": 3261.72,
+            "wealth_growth": 1761.72,
+            "all_scores": {
+              "producer_oil": 3261.72,
+              "producer_timber": 2617.88,
+              "producer_wheat": 2085.9,
+              "speculator_1": 1474.3,
+              "consumer_1": 948.54,
+              "consumer_2": 948.54,
+              "trader_1": 920.65,
+              "producer_iron": 887.6
+            }
+          },
+          "master_strategist": {
+            "agent_id": "consumer_1",
+            "strategic_score": 0.775,
+            "breakdown": {
+              "trade_efficiency": 1.0,
+              "negotiation_mastery": 0.5,
+              "cooperation_index": 1.0,
+              "event_adaptability": 0.5
+            },
+            "all_scores": {
+              "consumer_1": 0.775,
+              "consumer_2": 0.775,
+              "producer_oil": 0.675,
+              "speculator_1": 0.675,
+              "producer_wheat": 0.6417,
+              "trader_1": 0.6417,
+              "producer_iron": 0.325,
+              "producer_timber": 0.325
+            }
+          }
+        },
+        "leaderboard": [
+          {
+            "agent_id": "producer_oil",
+            "role": "producer",
+            "total_wealth": 3261.72,
+            "wealth_growth": 2041.72,
+            "strategic_score": 0.675,
+            "cumulative_reward": 0.4,
+            "accuracy": 1.0,
+            "total_trades": 14,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [
+              "Market Champion"
+            ],
+            "rank": 1,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "producer_timber",
+            "role": "producer",
+            "total_wealth": 2617.88,
+            "wealth_growth": 1637.88,
+            "strategic_score": 0.325,
+            "cumulative_reward": 0.4,
+            "accuracy": 1.0,
+            "total_trades": 0,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 2,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "producer_wheat",
+            "role": "producer",
+            "total_wealth": 2085.9,
+            "wealth_growth": 1185.9,
+            "strategic_score": 0.6417,
+            "cumulative_reward": 0.4,
+            "accuracy": 1.0,
+            "total_trades": 42,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 3,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "speculator_1",
+            "role": "speculator",
+            "total_wealth": 1474.3,
+            "wealth_growth": -25.7,
+            "strategic_score": 0.675,
+            "cumulative_reward": -1.0,
+            "accuracy": 1.0,
+            "total_trades": 2,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 4,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "consumer_1",
+            "role": "consumer",
+            "total_wealth": 948.54,
+            "wealth_growth": -51.46,
+            "strategic_score": 0.775,
+            "cumulative_reward": 7.508,
+            "accuracy": 1.0,
+            "total_trades": 14,
+            "successful_deals": 0,
+            "compound_produced": 6,
+            "reputation": 1.0,
+            "awards_won": [
+              "Master Strategist"
+            ],
+            "rank": 5,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "consumer_2",
+            "role": "consumer",
+            "total_wealth": 948.54,
+            "wealth_growth": -51.46,
+            "strategic_score": 0.775,
+            "cumulative_reward": 7.508,
+            "accuracy": 1.0,
+            "total_trades": 14,
+            "successful_deals": 0,
+            "compound_produced": 6,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 6,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "trader_1",
+            "role": "trader",
+            "total_wealth": 920.65,
+            "wealth_growth": -154.35,
+            "strategic_score": 0.6417,
+            "cumulative_reward": 8.52,
+            "accuracy": 1.0,
+            "total_trades": 26,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 7,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "producer_iron",
+            "role": "producer",
+            "total_wealth": 887.6,
+            "wealth_growth": -212.4,
+            "strategic_score": 0.325,
+            "cumulative_reward": 0.4,
+            "accuracy": 1.0,
+            "total_trades": 0,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 8,
+            "strategy": "rule-based"
+          }
+        ],
+        "market_metrics": {
+          "total_trades": 56,
+          "total_volume": 1398.5999999999995,
+          "coalitions_formed": 0,
+          "deals_negotiated": 0,
+          "compound_goods_produced": 12
+        },
+        "total_rounds": 20
+      },
+      {
+        "awards": {
+          "market_champion": {
+            "agent_id": "producer_oil",
+            "total_wealth": 3253.08,
+            "wealth_growth": 1753.08,
+            "all_scores": {
+              "producer_oil": 3253.08,
+              "producer_wheat": 2010.19,
+              "producer_timber": 1457.39,
+              "speculator_1": 1423.05,
+              "consumer_1": 946.78,
+              "consumer_2": 946.78,
+              "trader_1": 820.3,
+              "producer_iron": 650.12
+            }
+          },
+          "master_strategist": {
+            "agent_id": "consumer_1",
+            "strategic_score": 0.8417,
+            "breakdown": {
+              "trade_efficiency": 1.0,
+              "negotiation_mastery": 0.5,
+              "cooperation_index": 1.0,
+              "event_adaptability": 0.8333
+            },
+            "all_scores": {
+              "consumer_1": 0.8417,
+              "consumer_2": 0.8417,
+              "producer_wheat": 0.675,
+              "trader_1": 0.675,
+              "speculator_1": 0.675,
+              "producer_oil": 0.6417,
+              "producer_iron": 0.325,
+              "producer_timber": 0.325
+            }
+          }
+        },
+        "leaderboard": [
+          {
+            "agent_id": "producer_oil",
+            "role": "producer",
+            "total_wealth": 3253.08,
+            "wealth_growth": 2033.08,
+            "strategic_score": 0.6417,
+            "cumulative_reward": 0.4,
+            "accuracy": 1.0,
+            "total_trades": 18,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [
+              "Market Champion"
+            ],
+            "rank": 1,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "producer_wheat",
+            "role": "producer",
+            "total_wealth": 2010.19,
+            "wealth_growth": 1110.19,
+            "strategic_score": 0.675,
+            "cumulative_reward": 0.4,
+            "accuracy": 1.0,
+            "total_trades": 42,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 2,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "producer_timber",
+            "role": "producer",
+            "total_wealth": 1457.39,
+            "wealth_growth": 477.39,
+            "strategic_score": 0.325,
+            "cumulative_reward": 0.4,
+            "accuracy": 1.0,
+            "total_trades": 0,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 3,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "speculator_1",
+            "role": "speculator",
+            "total_wealth": 1423.05,
+            "wealth_growth": -76.95,
+            "strategic_score": 0.675,
+            "cumulative_reward": 2.092,
+            "accuracy": 1.0,
+            "total_trades": 9,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 4,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "consumer_1",
+            "role": "consumer",
+            "total_wealth": 946.78,
+            "wealth_growth": -53.22,
+            "strategic_score": 0.8417,
+            "cumulative_reward": 7.508,
+            "accuracy": 1.0,
+            "total_trades": 14,
+            "successful_deals": 0,
+            "compound_produced": 6,
+            "reputation": 1.0,
+            "awards_won": [
+              "Master Strategist"
+            ],
+            "rank": 5,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "consumer_2",
+            "role": "consumer",
+            "total_wealth": 946.78,
+            "wealth_growth": -53.22,
+            "strategic_score": 0.8417,
+            "cumulative_reward": 7.508,
+            "accuracy": 1.0,
+            "total_trades": 14,
+            "successful_deals": 0,
+            "compound_produced": 6,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 6,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "trader_1",
+            "role": "trader",
+            "total_wealth": 820.3,
+            "wealth_growth": -254.7,
+            "strategic_score": 0.675,
+            "cumulative_reward": 7.62,
+            "accuracy": 1.0,
+            "total_trades": 23,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 7,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "producer_iron",
+            "role": "producer",
+            "total_wealth": 650.12,
+            "wealth_growth": -449.88,
+            "strategic_score": 0.325,
+            "cumulative_reward": 0.4,
+            "accuracy": 1.0,
+            "total_trades": 0,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 8,
+            "strategy": "rule-based"
+          }
+        ],
+        "market_metrics": {
+          "total_trades": 60,
+          "total_volume": 1782.5999999999997,
+          "coalitions_formed": 0,
+          "deals_negotiated": 0,
+          "compound_goods_produced": 12
+        },
+        "total_rounds": 20
+      },
+      {
+        "awards": {
+          "market_champion": {
+            "agent_id": "producer_oil",
+            "total_wealth": 3605.7,
+            "wealth_growth": 2105.7,
+            "all_scores": {
+              "producer_oil": 3605.7,
+              "producer_wheat": 2269.06,
+              "producer_timber": 1622.92,
+              "speculator_1": 1494.3,
+              "producer_iron": 1362.92,
+              "trader_1": 1032.55,
+              "consumer_1": 953.89,
+              "consumer_2": 953.89
+            }
+          },
+          "master_strategist": {
+            "agent_id": "consumer_1",
+            "strategic_score": 0.8417,
+            "breakdown": {
+              "trade_efficiency": 1.0,
+              "negotiation_mastery": 0.5,
+              "cooperation_index": 1.0,
+              "event_adaptability": 0.8333
+            },
+            "all_scores": {
+              "consumer_1": 0.8417,
+              "consumer_2": 0.8417,
+              "producer_oil": 0.675,
+              "speculator_1": 0.675,
+              "producer_wheat": 0.6417,
+              "trader_1": 0.6417,
+              "producer_timber": 0.325,
+              "producer_iron": 0.225
+            }
+          }
+        },
+        "leaderboard": [
+          {
+            "agent_id": "producer_oil",
+            "role": "producer",
+            "total_wealth": 3605.7,
+            "wealth_growth": 2385.7,
+            "strategic_score": 0.675,
+            "cumulative_reward": 0.4,
+            "accuracy": 1.0,
+            "total_trades": 26,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [
+              "Market Champion"
+            ],
+            "rank": 1,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "producer_wheat",
+            "role": "producer",
+            "total_wealth": 2269.06,
+            "wealth_growth": 1369.06,
+            "strategic_score": 0.6417,
+            "cumulative_reward": 0.4,
+            "accuracy": 1.0,
+            "total_trades": 43,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 2,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "producer_timber",
+            "role": "producer",
+            "total_wealth": 1622.92,
+            "wealth_growth": 642.92,
+            "strategic_score": 0.325,
+            "cumulative_reward": 0.4,
+            "accuracy": 1.0,
+            "total_trades": 0,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 3,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "speculator_1",
+            "role": "speculator",
+            "total_wealth": 1494.3,
+            "wealth_growth": -5.7,
+            "strategic_score": 0.675,
+            "cumulative_reward": 5.356,
+            "accuracy": 1.0,
+            "total_trades": 16,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 4,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "producer_iron",
+            "role": "producer",
+            "total_wealth": 1362.92,
+            "wealth_growth": 262.92,
+            "strategic_score": 0.225,
+            "cumulative_reward": 0.4,
+            "accuracy": 1.0,
+            "total_trades": 0,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 5,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "trader_1",
+            "role": "trader",
+            "total_wealth": 1032.55,
+            "wealth_growth": -42.45,
+            "strategic_score": 0.6417,
+            "cumulative_reward": 8.22,
+            "accuracy": 1.0,
+            "total_trades": 25,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 6,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "consumer_1",
+            "role": "consumer",
+            "total_wealth": 953.89,
+            "wealth_growth": -46.11,
+            "strategic_score": 0.8417,
+            "cumulative_reward": 7.551,
+            "accuracy": 1.0,
+            "total_trades": 14,
+            "successful_deals": 0,
+            "compound_produced": 6,
+            "reputation": 1.0,
+            "awards_won": [
+              "Master Strategist"
+            ],
+            "rank": 7,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "consumer_2",
+            "role": "consumer",
+            "total_wealth": 953.89,
+            "wealth_growth": -46.11,
+            "strategic_score": 0.8417,
+            "cumulative_reward": 7.551,
+            "accuracy": 1.0,
+            "total_trades": 14,
+            "successful_deals": 0,
+            "compound_produced": 6,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 8,
+            "strategy": "rule-based"
+          }
+        ],
+        "market_metrics": {
+          "total_trades": 69,
+          "total_volume": 2322.5999999999995,
+          "coalitions_formed": 0,
+          "deals_negotiated": 0,
+          "compound_goods_produced": 12
+        },
+        "total_rounds": 20
+      },
+      {
+        "awards": {
+          "market_champion": {
+            "agent_id": "producer_oil",
+            "total_wealth": 3254.45,
+            "wealth_growth": 1754.45,
+            "all_scores": {
+              "producer_oil": 3254.45,
+              "producer_timber": 2472.76,
+              "producer_iron": 2043.5,
+              "producer_wheat": 2041.84,
+              "speculator_1": 1484.35,
+              "trader_1": 1058.3,
+              "consumer_1": 952.87,
+              "consumer_2": 952.87
+            }
+          },
+          "master_strategist": {
+            "agent_id": "consumer_1",
+            "strategic_score": 0.8417,
+            "breakdown": {
+              "trade_efficiency": 1.0,
+              "negotiation_mastery": 0.5,
+              "cooperation_index": 1.0,
+              "event_adaptability": 0.8333
+            },
+            "all_scores": {
+              "consumer_1": 0.8417,
+              "consumer_2": 0.8417,
+              "producer_oil": 0.675,
+              "speculator_1": 0.675,
+              "producer_wheat": 0.6417,
+              "trader_1": 0.6417,
+              "producer_iron": 0.325,
+              "producer_timber": 0.325
+            }
+          }
+        },
+        "leaderboard": [
+          {
+            "agent_id": "producer_oil",
+            "role": "producer",
+            "total_wealth": 3254.45,
+            "wealth_growth": 2034.45,
+            "strategic_score": 0.675,
+            "cumulative_reward": 0.4,
+            "accuracy": 1.0,
+            "total_trades": 18,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [
+              "Market Champion"
+            ],
+            "rank": 1,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "producer_timber",
+            "role": "producer",
+            "total_wealth": 2472.76,
+            "wealth_growth": 1492.76,
+            "strategic_score": 0.325,
+            "cumulative_reward": 0.4,
+            "accuracy": 1.0,
+            "total_trades": 0,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 2,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "producer_iron",
+            "role": "producer",
+            "total_wealth": 2043.5,
+            "wealth_growth": 943.5,
+            "strategic_score": 0.325,
+            "cumulative_reward": 0.4,
+            "accuracy": 1.0,
+            "total_trades": 0,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 3,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "producer_wheat",
+            "role": "producer",
+            "total_wealth": 2041.84,
+            "wealth_growth": 1141.84,
+            "strategic_score": 0.6417,
+            "cumulative_reward": 0.4,
+            "accuracy": 1.0,
+            "total_trades": 39,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 4,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "speculator_1",
+            "role": "speculator",
+            "total_wealth": 1484.35,
+            "wealth_growth": -15.65,
+            "strategic_score": 0.675,
+            "cumulative_reward": 0.9,
+            "accuracy": 1.0,
+            "total_trades": 6,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 5,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "trader_1",
+            "role": "trader",
+            "total_wealth": 1058.3,
+            "wealth_growth": -16.7,
+            "strategic_score": 0.6417,
+            "cumulative_reward": 7.02,
+            "accuracy": 1.0,
+            "total_trades": 21,
+            "successful_deals": 0,
+            "compound_produced": 0,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 6,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "consumer_1",
+            "role": "consumer",
+            "total_wealth": 952.87,
+            "wealth_growth": -47.13,
+            "strategic_score": 0.8417,
+            "cumulative_reward": 7.839,
+            "accuracy": 1.0,
+            "total_trades": 15,
+            "successful_deals": 0,
+            "compound_produced": 6,
+            "reputation": 1.0,
+            "awards_won": [
+              "Master Strategist"
+            ],
+            "rank": 7,
+            "strategy": "rule-based"
+          },
+          {
+            "agent_id": "consumer_2",
+            "role": "consumer",
+            "total_wealth": 952.87,
+            "wealth_growth": -47.13,
+            "strategic_score": 0.8417,
+            "cumulative_reward": 7.839,
+            "accuracy": 1.0,
+            "total_trades": 15,
+            "successful_deals": 0,
+            "compound_produced": 6,
+            "reputation": 1.0,
+            "awards_won": [],
+            "rank": 8,
+            "strategy": "rule-based"
+          }
+        ],
+        "market_metrics": {
+          "total_trades": 57,
+          "total_volume": 1722.5999999999997,
+          "coalitions_formed": 0,
+          "deals_negotiated": 0,
+          "compound_goods_produced": 12
+        },
+        "total_rounds": 20
+      }
+    ],
+    "summary": {
+      "num_episodes": 5,
+      "agent_summaries": {
+        "producer_oil": {
+          "avg_wealth": 3329.79,
+          "avg_growth": 2109.79,
+          "avg_strategic": 0.6683,
+          "avg_rank": 1.0,
+          "champion_wins": 5,
+          "strategist_wins": 0,
+          "is_llm_agent": false
+        },
+        "producer_timber": {
+          "avg_wealth": 2096.26,
+          "avg_growth": 1116.26,
+          "avg_strategic": 0.325,
+          "avg_rank": 2.4,
+          "champion_wins": 0,
+          "strategist_wins": 0,
+          "is_llm_agent": false
+        },
+        "producer_iron": {
+          "avg_wealth": 1441.07,
+          "avg_growth": 341.07,
+          "avg_strategic": 0.2983,
+          "avg_rank": 5.4,
+          "champion_wins": 0,
+          "strategist_wins": 0,
+          "is_llm_agent": false
+        },
+        "producer_wheat": {
+          "avg_wealth": 2104.86,
+          "avg_growth": 1204.86,
+          "avg_strategic": 0.6484,
+          "avg_rank": 3.0,
+          "champion_wins": 0,
+          "strategist_wins": 0,
+          "is_llm_agent": false
+        },
+        "speculator_1": {
+          "avg_wealth": 1470.02,
+          "avg_growth": -29.98,
+          "avg_strategic": 0.675,
+          "avg_rank": 4.4,
+          "champion_wins": 0,
+          "strategist_wins": 0,
+          "is_llm_agent": true
+        },
+        "trader_1": {
+          "avg_wealth": 977.02,
+          "avg_growth": -97.98,
+          "avg_strategic": 0.6484,
+          "avg_rank": 6.4,
+          "champion_wins": 0,
+          "strategist_wins": 0,
+          "is_llm_agent": true
+        },
+        "consumer_1": {
+          "avg_wealth": 950.87,
+          "avg_growth": -49.13,
+          "avg_strategic": 0.8284,
+          "avg_rank": 6.2,
+          "champion_wins": 0,
+          "strategist_wins": 5,
+          "is_llm_agent": false
+        },
+        "consumer_2": {
+          "avg_wealth": 950.87,
+          "avg_growth": -49.13,
+          "avg_strategic": 0.8284,
+          "avg_rank": 7.2,
+          "champion_wins": 0,
+          "strategist_wins": 0,
+          "is_llm_agent": false
+        }
+      },
+      "llm_agents": {
+        "ids": [
+          "trader_1",
+          "speculator_1"
+        ],
+        "avg_wealth": 1223.52,
+        "avg_growth": -63.98,
+        "avg_strategic": 0.6617,
+        "avg_rank": 5.4,
+        "champion_wins": 0,
+        "strategist_wins": 0
+      },
+      "baseline_agents": {
+        "avg_wealth": 1812.29,
+        "avg_growth": 778.95,
+        "avg_strategic": 0.5995,
+        "avg_rank": 4.2
+      },
+      "market_activity": {
+        "avg_trades": 61.0,
+        "avg_volume": 1854.6
+      }
+    }
+  }
+}

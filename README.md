@@ -6,6 +6,7 @@ colorTo: blue
 sdk: docker
 pinned: false
 app_port: 7860
+suggested_hardware: t4-small
 tags:
   - openenv
   - multi-agent
@@ -48,9 +49,29 @@ A **multi-commodity market simulation environment** purpose-built for training L
                             [Wealth Tracking]      [Event Generator]
 ```
 
-## Deployment to HuggingFace Spaces
+## Deployment to HuggingFace Spaces (GPU)
 
 Space: https://huggingface.co/spaces/kenmandal/market-forge-env
+
+> **Hardware:** This Space uses a **T4 Small GPU** (`suggested_hardware: t4-small`)
+> so the trained model can run inference during visual simulations. The
+> Dockerfile is based on `pytorch/pytorch:2.2.1-cuda12.1-cudnn8-runtime`
+> and downloads the model at build time.
+
+### Step 0 — Set GPU Hardware
+
+On the HuggingFace Space settings page, select **T4 Small** (or higher) under
+**Space hardware**. The `suggested_hardware: t4-small` field in the README
+frontmatter signals this to HuggingFace, but you should verify it is active.
+
+Available GPU tiers:
+| Tier | GPU | VRAM | Cost |
+|------|-----|------|------|
+| `t4-small` | NVIDIA T4 | 16 GB | ~$0.60/hr |
+| `t4-medium` | NVIDIA T4 | 16 GB | ~$0.90/hr |
+| `a10g-small` | NVIDIA A10G | 24 GB | ~$1.05/hr |
+
+The 0.5B model fits easily on a T4. For 1.7B+ models use `a10g-small`.
 
 ### Step 1 — Authenticate
 Only needed once (or when the token expires). Token name: `openenv-token`.
@@ -75,11 +96,26 @@ api.upload_folder(
         "tests/", "training_results.png", "deploy_to_hf.sh",
         "*_1.py", "~$*",
     ],
-    commit_message="Deploy Multi-Agent MarketForge",
+    commit_message="Deploy Multi-Agent MarketForge with GPU + trained model",
 )
 ```
 
+### Step 3 — Use a Custom Trained Model
+
+To deploy your own fine-tuned model instead of the base Qwen:
+
+**Option A — Set `MODEL_REPO` env var in HF Space Secrets:**
+```
+MODEL_REPO=kenmandal/market-forge-agent
+```
+The Dockerfile downloads this model at build time.
+
+**Option B — Upload model weights directly:**
+Push your `./market-forge-agent` directory to a HuggingFace model repo,
+then set `MODEL_REPO` to that repo ID.
+
 Files deployed: `README.md`, `Dockerfile`, `requirements.txt`, `app_visual.py`,
+`run_simulation.py`, `evaluate_and_report.py`,
 `client.py`, `models.py`, `rewards.py`, `__init__.py`, `server/__init__.py`,
 `server/app.py`, `server/market_environment.py`, `train_market_forge.py`,
 `train_market_forge_notebook.py`
