@@ -185,7 +185,7 @@ The reward system implements the formal mixed-motive payoff:
 | `join_coalition` / `leave_coalition` | Manage coalition membership | Coalition |
 | `pass` | Do nothing | -- |
 
-## Judging Criteria Alignment
+## Hackathon Judging Criteria Alignment
 
 - **Environment Innovation (40%)**: Novel multi-commodity CDA + NL negotiation + coalition dynamics
 - **Storytelling (30%)**: Interactive Gradio dashboard with real-time charts and event timeline
